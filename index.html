@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>daegon charts | enhanced</title>
+    <title>daegon charts</title>
     <link rel="icon" type="image/png" href="https://i.imgur.com/jaBZ19n.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,7 +13,23 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <style>
-        :root { --primary: #000000; --secondary: #F9FAFB; --accent: #FFD700; --accent-dark: #DAA520; --gold: #FFD700; --bg-color: #000000; --card-bg: #FFFFFF; --card-bg-hover: #F5F5F5; --border-color: #E5E5E5; --muted-text: #6B7280; --run-up: #10B981; --run-down: #EF4444; --run-new: #FBBF24; --run-peak: #8B5CF6; --run-steady: #9CA3AF; }
+        :root {
+            --primary: #000000;
+            --secondary: #F9FAFB;
+            --accent: #FFD700;
+            --accent-dark: #DAA520;
+            --gold: #FFD700;
+            --bg-color: #000000;
+            --card-bg: #FFFFFF;
+            --card-bg-hover: #F5F5F5;
+            --border-color: #E5E5E5;
+            --muted-text: #6B7280;
+            --run-up: #10B981;
+            --run-down: #EF4444;
+            --run-new: #FBBF24;
+            --run-peak: #8B5CF6;
+            --run-steady: #9CA3AF;
+        }
         body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--secondary); position: relative; }
         .music-notes-bg { position: fixed; bottom: 20px; right: 20px; font-size: 80px; color: rgba(255, 215, 0, 0.08); z-index: 0; pointer-events: none; animation: floatNote 8s ease-in-out infinite; }
         .music-notes-bg-2 { position: fixed; bottom: 100px; left: 20px; font-size: 60px; color: rgba(255, 215, 0, 0.06); z-index: 0; pointer-events: none; animation: floatNote 10s ease-in-out infinite reverse; }
@@ -65,39 +81,144 @@
         @media (min-width: 768px) { .weekly-charts-grid { grid-template-columns: repeat(4, 1fr); gap: 1.5rem; } }
         @media (max-width: 640px) { .weekly-charts-grid { grid-template-columns: 1fr !important; } .flatpickr-calendar { width: 90% !important; max-width: 350px !important; } .spotify-image { width: 56px; height: 56px; } .rank-number { font-size: 1.25rem; min-width: 2.5rem; } }
         .chart-stats-vertical { display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.7rem; color: #6B7280; text-align: right; font-weight: 500; }
+        @media (min-width: 768px) { .chart-stats-vertical { font-size: 0.75rem; gap: 0.35rem; } }
+        .chart-stats-vertical .stat-value { color: #111827; font-weight: 700; margin-left: 0.25rem; }
         .chart-container { background-color: #000; padding: 1rem; border-radius: 1rem; }
+        @media (min-width: 768px) { .chart-container { padding: 1.5rem; } }
         .diff-indicator { display: inline-block; margin-left: 0.25rem; font-size: 0.7rem; font-weight: 600; }
-        .chart-run-grid { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 1rem; max-height: 400px; overflow-y: auto; padding-right: 0.5rem; }
-        .chart-run-card { background-color: #f9fafb; border-radius: 8px; padding: 0.6rem 0.8rem; border-left: 4px solid transparent; transition: all 0.1s ease; font-size: 0.85rem; display: flex; justify-content: space-between; align-items: center; }
-        .chart-run-card.run-up { border-left-color: var(--run-up); background-color: rgba(16,185,129,0.08); }
-        .chart-run-card.run-down { border-left-color: var(--run-down); background-color: rgba(239,68,68,0.08); }
-        .chart-run-card.run-new { border-left-color: var(--run-new); background-color: rgba(251,191,36,0.08); }
-        .chart-run-card.run-peak { border-left-color: var(--run-peak); background-color: rgba(139,92,246,0.08); }
-        .chart-run-card.run-steady { border-left-color: var(--run-steady); background-color: rgba(156,163,175,0.08); }
-        .chart-run-card.run-number-one { border-left-color: var(--accent); background-color: rgba(255,215,0,0.15); }
-        .date-link { cursor: pointer; font-weight: 500; color: #2563eb; text-decoration: underline; }
-        .date-link:hover { color: var(--accent); }
-        .run-meta-bar { background: #f3f4f6; padding: 0.8rem; border-radius: 12px; margin-bottom: 1.2rem; display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; font-size: 0.85rem; font-weight: 500; color: #1f2937; }
-        .show-more-btn { background: var(--accent); color: black; border: none; padding: 0.4rem 1rem; border-radius: 999px; font-weight: 600; font-size: 0.75rem; cursor: pointer; transition: 0.2s; margin-top: 0.75rem; display: inline-block; }
-        .show-more-btn:hover { background: #e6c200; }
-        .artist-list-card .entry-item { padding: 0.5rem 0.75rem; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
-        .entry-item .item-name { font-weight: 500; color: #111827; flex: 2; }
-        .entry-stats { display: flex; gap: 0.8rem; font-size: 0.7rem; color: #4b5563; }
-        .units-badge { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; font-size: 0.65rem; padding: 0.15rem 0.5rem; border-radius: 20px; white-space: nowrap; }
+        
+        .chart-run-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .chart-run-list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            border-left: 4px solid transparent;
+            transition: all 0.2s ease;
+        }
+        .chart-run-list-item:hover {
+            background-color: #f0f0f0;
+        }
+        .chart-run-list-item.run-up { border-left-color: var(--run-up); background-color: rgba(16,185,129,0.05); }
+        .chart-run-list-item.run-down { border-left-color: var(--run-down); background-color: rgba(239,68,68,0.05); }
+        .chart-run-list-item.run-new { border-left-color: var(--run-new); background-color: rgba(251,191,36,0.05); }
+        .chart-run-list-item.run-peak { border-left-color: var(--run-peak); background-color: rgba(139,92,246,0.05); }
+        .chart-run-list-item.run-steady { border-left-color: var(--run-steady); background-color: rgba(156,163,175,0.05); }
+        .chart-run-list-item.run-number-one { border-left-color: var(--accent); background-color: rgba(255,215,0,0.1); }
+        .chart-run-date-btn {
+            background: none;
+            border: none;
+            color: var(--accent);
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        .chart-run-date-btn:hover { text-decoration: underline; }
+        .chart-run-position { font-weight: 700; font-size: 1rem; min-width: 50px; }
+        .chart-run-peak-badge, .chart-run-new-badge {
+            font-size: 0.65rem;
+            padding: 0.15rem 0.4rem;
+            border-radius: 12px;
+            margin-left: 0.5rem;
+        }
+        .chart-run-peak-badge { background-color: #8B5CF6; color: white; }
+        .chart-run-new-badge { background-color: #FBBF24; color: black; }
+        .chart-run-stats {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.75rem;
+            color: #6B7280;
+        }
+        .chart-run-stats span { font-weight: 600; color: #111827; }
+        
         .artist-header-image { width: 100%; height: 200px; object-fit: cover; border-radius: 16px; margin-bottom: 1.5rem; }
         @media (min-width: 768px) { .artist-header-image { height: 280px; } }
         .artist-name-large { font-size: 2rem; font-weight: 800; margin-bottom: 0.5rem; color: white; }
         @media (min-width: 768px) { .artist-name-large { font-size: 3rem; } }
-        .artists-icons-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 1.5rem; margin-top: 1rem; }
-        .artist-icon-image { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; box-shadow: 0 8px 16px rgba(0,0,0,0.3); }
-        .circle-cards-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; max-width: 500px; margin: 0 auto 2rem auto; }
-        @media (min-width: 640px) { .circle-cards-grid { grid-template-columns: repeat(4, 1fr); max-width: 800px; } }
-        .circle-card { width: 100px; height: 100px; border-radius: 50%; overflow: hidden; margin: 0 auto; box-shadow: 0 10px 20px rgba(0,0,0,0.5); transition: all 0.3s ease; cursor: pointer; }
-        .circle-card:hover { transform: scale(1.05); }
-        .chart-nav-btn { background-color: white; color: #111827; border: 1px solid #E5E5E5; border-radius: 0.375rem; padding: 0.5rem 1rem; font-weight: 600; }
         .artist-list-card { background-color: white; border-radius: 12px; overflow: hidden; margin-bottom: 1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
         .artist-list-header { background-color: #f8f9fa; padding: 0.75rem 1rem; border-bottom: 1px solid #e5e7eb; }
+        .artist-list-item { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 1rem; border-bottom: 1px solid #f0f0f0; }
+        .artist-list-item:hover { background-color: #fafafa; }
+        .artist-list-item .item-name { color: #111827; font-weight: 500; }
+        .units-badge { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; font-size: 0.7rem; padding: 0.2rem 0.5rem; border-radius: 0.25rem; margin-left: 0.5rem; white-space: nowrap; }
+        .artists-icons-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 1.5rem; margin-top: 1rem; }
+        @media (min-width: 640px) { .artists-icons-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 2rem; } }
+        .artist-icon-card { display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: transform 0.2s ease; }
+        .artist-icon-card:hover { transform: translateY(-5px); }
+        .artist-icon-image { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; box-shadow: 0 8px 16px rgba(0,0,0,0.3); transition: all 0.3s ease; }
+        @media (min-width: 640px) { .artist-icon-image { width: 120px; height: 120px; } }
+        .artist-icon-placeholder { width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; color: var(--accent); }
+        .artist-icon-name { margin-top: 0.75rem; font-size: 0.8rem; font-weight: 500; text-align: center; color: white; }
+        .circle-card { width: 100px; height: 100px; border-radius: 50%; overflow: hidden; position: relative; margin: 0 auto; box-shadow: 0 10px 20px rgba(0,0,0,0.5); transition: all 0.3s ease; }
+        @media (min-width: 640px) { .circle-card { width: 120px; height: 120px; } }
+        .circle-card:hover { transform: scale(1.1); box-shadow: 0 15px 30px rgba(255,215,0,0.3); }
+        .circle-card-content { position: absolute; bottom: 0; left: 0; right: 0; padding: 0.5rem; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); text-align: center; }
+        .circle-card-title { font-size: 0.8rem; font-weight: 600; color: white; margin: 0; }
+        .circle-cards-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; max-width: 500px; margin: 0 auto 2rem auto; }
+        @media (min-width: 640px) { .circle-cards-grid { grid-template-columns: repeat(4, 1fr); max-width: 800px; gap: 1.5rem; } }
+        .circle-card-container { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; cursor: pointer; }
+        .circle-card-label { font-size: 0.7rem; font-weight: 500; color: var(--secondary); text-align: center; }
+        @media (min-width: 640px) { .circle-card-label { font-size: 0.8rem; } }
+        .chart-nav-btn { background-color: white; color: #111827; border: 1px solid #E5E5E5; border-radius: 0.375rem; padding: 0.5rem 1rem; font-weight: 600; transition: all 0.2s ease; }
+        .chart-nav-btn:hover { background-color: #F5F5F5; border-color: var(--accent); }
+        .chart-nav-btn.active { background-color: var(--accent); color: #000; border-color: var(--accent); }
         .btn-hover:active { transform: scale(0.97); }
+        .chart-card { cursor: pointer; transition: all 0.2s ease; background-color: #000; border: 1px solid #1f1f1f; border-radius: 12px; padding: 1rem; }
+        .chart-card:hover { border-color: var(--accent); }
+        .goat-card-border:hover { border-color: var(--gold); }
+        .goat-text { color: var(--gold); }
+        .year-btn { background: rgba(255,215,0,0.1); color: var(--accent); padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; }
+        .year-btn:hover { background: rgba(255,215,0,0.3); }
+        .year-btn.active { background: var(--accent); color: #000; }
+        .year-selector { display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; }
+        .back-button { display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 600; transition: color 0.2s; }
+        .artist-list-card .text-gray-800 { color: #1f2937; }
+        .artist-list-card .font-medium { color: #111827; }
+        .rank-symbol { font-size: 0.8rem; font-weight: 600; display: inline-block; margin-left: 0.25rem; }
+        @media (min-width: 768px) { .rank-symbol { font-size: 1rem; } }
+        .loading-skeleton { background: linear-gradient(90deg, #1a1a1a 25%, #2a2a2a 50%, #1a1a1a 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 12px; min-height: 120px; }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        .nav-charts-wrapper { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; margin-bottom: 1.5rem; }
+        .nav-charts-wrapper .chart-nav-btn { font-size: 0.75rem; padding: 0.4rem 0.8rem; }
+        @media (min-width: 768px) { .nav-charts-wrapper .chart-nav-btn { font-size: 0.875rem; padding: 0.5rem 1rem; } }
+        
+        .stats-selector { background-color: #1a1a1a; border-radius: 12px; padding: 1rem; margin-bottom: 1.5rem; }
+        .stats-selector select { background-color: #2a2a2a; color: white; border: 1px solid #3a3a3a; border-radius: 8px; padding: 0.75rem 1rem; width: 100%; max-width: 400px; font-size: 0.9rem; cursor: pointer; }
+        .stats-selector select:focus { outline: none; border-color: var(--accent); }
+        .stats-table { width: 100%; border-collapse: collapse; }
+        .stats-table th { text-align: left; padding: 1rem; background-color: #1a1a1a; color: var(--accent); font-weight: 600; border-bottom: 2px solid #333; }
+        .stats-table td { padding: 0.75rem 1rem; border-bottom: 1px solid #2a2a2a; color: #e5e5e5; }
+        .stats-table tr:hover { background-color: #1a1a1a; }
+        .stats-table .rank-col { width: 80px; font-weight: 700; color: var(--accent); }
+        .stats-table .number-col { text-align: right; font-family: monospace; font-weight: 600; color: #10b981; }
+        .stats-item-image { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; background: #2a2a2a; }
+        @media (min-width: 768px) { .stats-item-image { width: 60px; height: 60px; } }
+        .copy-data-btn {
+            background: none;
+            border: none;
+            color: var(--accent);
+            cursor: pointer;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 20px;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-weight: 500;
+        }
+        .copy-data-btn:hover {
+            background-color: rgba(255,215,0,0.1);
+            transform: scale(1.02);
+        }
     </style>
 </head>
 <body class="flex flex-col min-h-screen">
@@ -107,16 +228,26 @@
     <header class="bg-black border-b border-gray-800 sticky top-0 z-20 shadow-sm">
         <div class="container mx-auto px-4 py-3 md:py-4 flex justify-between items-center">
             <h1 class="text-xl md:text-3xl font-extrabold"><span class="gold-title" id="mainTitle">daegon charts</span></h1>
-            <nav class="flex space-x-2 md:space-x-4">
+            <nav class="flex space-x-2 md:space-x-4 items-center">
                 <button id="navAllArtists" class="text-xs md:text-sm font-semibold text-gray-300 hover:text-accent transition-colors">All Artists Entries</button>
+                <span class="text-gray-600">|</span>
                 <button id="navChartBeat" class="text-xs md:text-sm font-semibold text-gray-300 hover:text-accent transition-colors">Chart Beat</button>
+                <span class="text-gray-600">|</span>
+                <button id="navStats" class="text-xs md:text-sm font-semibold text-gray-300 hover:text-accent transition-colors">Stats</button>
             </nav>
         </div>
     </header>
     <main id="app" class="flex-grow container mx-auto p-3 md:p-6 relative z-10"></main>
-    <footer class="bg-black mt-8 py-6 border-t border-gray-800 relative z-10"><div class="container mx-auto px-4 text-center text-gray-500 text-xs md:text-sm"><p>Chart generated based on dantaswt's Last.fm data</p><p class="mt-2">Developed with <i class="fas fa-heart text-red-500"></i> using HTML, CSS & JavaScript</p></div></footer>
+    <footer class="bg-black mt-8 py-6 border-t border-gray-800 relative z-10">
+        <div class="container mx-auto px-4 text-center text-gray-500 text-xs md:text-sm">
+            <p>Chart generated based on dantaswt's Last.fm data</p>
+            <p class="mt-2">Developed with <i class="fas fa-heart text-red-500"></i> using HTML, CSS & JavaScript</p>
+        </div>
+    </footer>
     <div class="item-details-modal" id="itemDetailsModal"><div class="modal-content w-full max-w-2xl"><button class="close-modal" id="closeModal">×</button><div id="modalContent"></div></div></div>
+
     <script>
+        // ==================== CONFIG ====================
         const SPOTIFY_CLIENT_ID = '60d65b0ac9f14d6aa91c08a66894cea9';
         const SPOTIFY_CLIENT_SECRET = 'caf3f20ae798475e8dec65697f210c2a';
         let SPOTIFY_ACCESS_TOKEN = '';
@@ -124,9 +255,26 @@
         try { const saved = localStorage.getItem('daegon_image_cache'); if(saved) imageCache = JSON.parse(saved); } catch(e) {}
         function saveImageCache() { try { localStorage.setItem('daegon_image_cache', JSON.stringify(imageCache)); } catch(e) {} }
 
+        const TAYLORS_VERSION_YEARS = {
+            'fearless (taylor\'s version)': '2021',
+            'red (taylor\'s version)': '2021',
+            'speak now (taylor\'s version)': '2023',
+            '1989 (taylor\'s version)': '2023'
+        };
+
+        function getArtistSearchName(artistName) {
+            if (!artistName) return artistName;
+            const lowerName = artistName.toLowerCase();
+            if (lowerName === 'anitta') return 'Anitta cantora';
+            if (lowerName === 'jão' || lowerName === 'jao') return 'Jão cantor';
+            if (lowerName === 'taylor swift') return 'Taylor Swift';
+            return artistName;
+        }
+
         const weeklyChartList = ['songs', 'artists', 'albums', 'radioSongs', 'topStreamingAlbums', 'topAlbumSales', 'streamingSongs', 'digitalSongsSales'];
         const yearEndList = ['yearEndSongs', 'yearEndArtists', 'yearEndAlbums'];
         const goatList = ['goatSongs', 'goatArtists', 'goatAlbums'];
+
         const chartsConfig = {
             songs: { url: 'https://docs.google.com/spreadsheets/d/1t6_7SOlspmNYrXq8PSfJ74frIdrWwQBFITQ3bQmRzeg/export?format=csv&gid=904867620', title: 'Hot 100', icon: 'fa-music', loaded: false },
             artists: { url: 'https://docs.google.com/spreadsheets/d/1t6_7SOlspmNYrXq8PSfJ74frIdrWwQBFITQ3bQmRzeg/export?format=csv&gid=1568177610', title: 'Artist 50', icon: 'fa-user', loaded: false },
@@ -142,37 +290,423 @@
             goatSongs: { url: 'https://docs.google.com/spreadsheets/d/1t6_7SOlspmNYrXq8PSfJ74frIdrWwQBFITQ3bQmRzeg/export?format=csv&gid=1157278896', title: 'Songs', icon: 'fa-trophy', loaded: false },
             goatArtists: { url: 'https://docs.google.com/spreadsheets/d/1t6_7SOlspmNYrXq8PSfJ74frIdrWwQBFITQ3bQmRzeg/export?format=csv&gid=222299678', title: 'Artists', icon: 'fa-trophy', loaded: false },
             goatAlbums: { url: 'https://docs.google.com/spreadsheets/d/1t6_7SOlspmNYrXq8PSfJ74frIdrWwQBFITQ3bQmRzeg/export?format=csv&gid=1548244755', title: 'Albums', icon: 'fa-trophy', loaded: false },
-            artistStats: { url: 'https://docs.google.com/spreadsheets/d/1t6_7SOlspmNYrXq8PSfJ74frIdrWwQBFITQ3bQmRzeg/export?format=csv&gid=1519606558', title: 'Artist Statistics', icon: 'fa-chart-bar', loaded: false }
+            artistStats: { url: 'https://docs.google.com/spreadsheets/d/1t6_7SOlspmNYrXq8PSfJ74frIdrWwQBFITQ3bQmRzeg/export?format=csv&gid=1519606558', title: 'Artist Statistics', icon: 'fa-chart-bar', loaded: false },
+            statsData: { url: 'https://docs.google.com/spreadsheets/d/1t6_7SOlspmNYrXq8PSfJ74frIdrWwQBFITQ3bQmRzeg/export?format=csv&gid=193788146', title: 'Stats', icon: 'fa-chart-line', loaded: false }
         };
-        const chartBeatConfig = { hot100: { url: 'https://docs.google.com/spreadsheets/d/1t6_7SOlspmNYrXq8PSfJ74frIdrWwQBFITQ3bQmRzeg/export?format=csv&gid=1019123057', title: 'Hot 100 Songs' }, artists: { url: 'https://docs.google.com/spreadsheets/d/1t6_7SOlspmNYrXq8PSfJ74frIdrWwQBFITQ3bQmRzeg/export?format=csv&gid=157219648', title: 'Top 50 Artists' }, top100Albums: { url: 'https://docs.google.com/spreadsheets/d/1t6_7SOlspmNYrXq8PSfJ74frIdrWwQBFITQ3bQmRzeg/export?format=csv&gid=677909186', title: 'Top 100 Albums' } };
-        let appState = { activeChart: 'songs', chartData: {}, currentDate: null, currentView: 'home', currentArtist: null, currentYear: new Date().getFullYear().toString(), colMaps: {}, top3Data: {}, chartRunData: {}, navigationHistory: [], chartBeatData: { hot100: [], artists: [], top100Albums: [] }, currentBlog: 'hot100', sharedDate: null, artistDetailsData: {}, activeTag: null, allArtistsList: [], lastChart: null, lastChartDate: null, lastChartYear: null };
+
+        const chartBeatConfig = {
+            hot100: { url: 'https://docs.google.com/spreadsheets/d/1t6_7SOlspmNYrXq8PSfJ74frIdrWwQBFITQ3bQmRzeg/export?format=csv&gid=1019123057', title: 'Hot 100 Songs' },
+            artists: { url: 'https://docs.google.com/spreadsheets/d/1t6_7SOlspmNYrXq8PSfJ74frIdrWwQBFITQ3bQmRzeg/export?format=csv&gid=157219648', title: 'Top 50 Artists' },
+            top100Albums: { url: 'https://docs.google.com/spreadsheets/d/1t6_7SOlspmNYrXq8PSfJ74frIdrWwQBFITQ3bQmRzeg/export?format=csv&gid=677909186', title: 'Top 100 Albums' }
+        };
+
+        let appState = {
+            activeChart: 'songs', chartData: {}, currentDate: null, currentView: 'home', currentArtist: null, currentYear: new Date().getFullYear().toString(),
+            colMaps: {}, top3Data: {}, chartRunData: {}, navigationHistory: [], chartBeatData: { hot100: [], artists: [], top100Albums: [] },
+            currentBlog: 'hot100', sharedDate: null, artistDetailsData: {}, activeTag: null, allArtistsList: [], lastChart: null, lastChartDate: null, lastChartYear: null,
+            statsData: { raw: [], categories: [], currentCategory: null, items: [] }
+        };
+
         const appContainer = document.getElementById('app'), modal = document.getElementById('itemDetailsModal'), modalContent = document.getElementById('modalContent'), closeModal = document.getElementById('closeModal');
 
-        async function getSpotifyToken() { if (SPOTIFY_ACCESS_TOKEN) return SPOTIFY_ACCESS_TOKEN; try { const res = await fetch('https://accounts.spotify.com/api/token', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Authorization': 'Basic ' + btoa(SPOTIFY_CLIENT_ID + ':' + SPOTIFY_CLIENT_SECRET) }, body: 'grant_type=client_credentials' }); const data = await res.json(); SPOTIFY_ACCESS_TOKEN = data.access_token; return SPOTIFY_ACCESS_TOKEN; } catch(e) { return null; } }
-        async function getSpotifyImage(query, type, extra = {}) { if (!query) return null; let searchQuery = query; if (query.toLowerCase() === 'anitta') searchQuery = 'Anitta cantora'; else if (query.toLowerCase() === 'jão' || query.toLowerCase() === 'jao') searchQuery = 'Jão cantor'; const { artist = '', track = '', album = '' } = extra; const key = `${type}:${searchQuery}:${artist}:${track}:${album}`.toLowerCase(); if (imageCache[key]) return imageCache[key]; const token = await getSpotifyToken(); if (!token) return null; let url = null; try { if (track && artist) { const res = await fetch(`https://api.spotify.com/v1/search?q=${encodeURIComponent(`track:${track} artist:${artist}`)}&type=track&limit=1`, { headers: { Authorization: `Bearer ${token}` } }); const data = await res.json(); url = data.tracks?.items?.[0]?.album?.images?.[0]?.url; } if (!url && album && artist) { const res = await fetch(`https://api.spotify.com/v1/search?q=${encodeURIComponent(`album:${album} artist:${artist}`)}&type=album&limit=1`, { headers: { Authorization: `Bearer ${token}` } }); const data = await res.json(); url = data.albums?.items?.[0]?.images?.[0]?.url; } if (!url) { const searchType = type === 'artist' ? 'artist' : 'album'; const res = await fetch(`https://api.spotify.com/v1/search?q=${encodeURIComponent(searchQuery)}&type=${searchType}&limit=1`, { headers: { Authorization: `Bearer ${token}` } }); const data = await res.json(); if (type === 'artist') url = data.artists?.items?.[0]?.images?.[0]?.url; else url = data.albums?.items?.[0]?.images?.[0]?.url; } if (url) { imageCache[key] = url; saveImageCache(); } return url; } catch (e) { return null; } }
+        function normalizeText(str) {
+            if (!str) return '';
+            return str.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^\w\s]/g, '').trim();
+        }
+        
+        function extractYearFromAlbumName(albumName) {
+            if (!albumName) return null;
+            const match = albumName.match(/[\(\[](\d{4})[\)\]]/);
+            return match ? match[1] : null;
+        }
+        
+        function isTaylorsVersion(albumName) {
+            if (!albumName) return false;
+            const lowerName = albumName.toLowerCase();
+            return lowerName.includes("taylor's version") || lowerName.includes("taylor’s version");
+        }
+        
+        function getTaylorsVersionYear(albumName) {
+            const lowerName = albumName.toLowerCase();
+            for (const [key, year] of Object.entries(TAYLORS_VERSION_YEARS)) {
+                if (lowerName.includes(key)) return year;
+            }
+            return null;
+        }
+        
+        function scoreAlbum(item, targetAlbum, targetArtist, targetYear) {
+            let score = 0;
+            const itemName = item.name;
+            const itemArtist = item.artists[0]?.name || '';
+            const itemYear = item.release_date ? item.release_date.split('-')[0] : null;
+            const normalizedItemName = normalizeText(itemName);
+            const normalizedTargetAlbum = normalizeText(targetAlbum);
+            const normalizedItemArtist = normalizeText(itemArtist);
+            const normalizedTargetArtist = normalizeText(targetArtist);
+            if (normalizedItemArtist === normalizedTargetArtist) score += 50;
+            else if (normalizedItemArtist.includes(normalizedTargetArtist) || normalizedTargetArtist.includes(normalizedItemArtist)) score += 25;
+            const cleanItemName = normalizedItemName.replace(/\s*\([^)]*\)/g, '').trim();
+            const cleanTargetAlbum = normalizedTargetAlbum.replace(/\s*\([^)]*\)/g, '').trim();
+            if (normalizedItemName === normalizedTargetAlbum) score += 100;
+            else if (cleanItemName === cleanTargetAlbum) score += 80;
+            else if (cleanItemName.includes(cleanTargetAlbum) || cleanTargetAlbum.includes(cleanItemName)) score += 50;
+            if (isTaylorsVersion(targetAlbum)) {
+                if (itemName.toLowerCase().includes("taylor's version") || itemName.toLowerCase().includes("taylor’s version")) score += 100;
+                const correctYear = getTaylorsVersionYear(targetAlbum);
+                if (correctYear && itemYear === correctYear) score += 80;
+                if (!itemName.toLowerCase().includes("taylor's version") && !itemName.toLowerCase().includes("taylor’s version")) score -= 50;
+            }
+            const albumYearFromName = extractYearFromAlbumName(itemName);
+            if (targetYear && itemYear && targetYear === itemYear) score += 40;
+            else if (targetYear && albumYearFromName && targetYear === albumYearFromName) score += 35;
+            else if (itemYear) { const currentYear = new Date().getFullYear(); const yearDiff = currentYear - parseInt(itemYear); if (yearDiff <= 5) score += 15; else if (yearDiff <= 10) score += 5; }
+            if (item.album_type === 'album') score += 20;
+            else if (item.album_type === 'single') score -= 20;
+            else if (item.album_type === 'compilation') score -= 10;
+            if (itemName.toLowerCase().includes('deluxe')) score += 5;
+            if (itemName.toLowerCase().includes('live')) score -= 30;
+            if (itemName.toLowerCase().includes('remix')) score -= 25;
+            return score;
+        }
+
+        async function getSpotifyToken() {
+            if (SPOTIFY_ACCESS_TOKEN) return SPOTIFY_ACCESS_TOKEN;
+            try {
+                const res = await fetch('https://accounts.spotify.com/api/token', {
+                    method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Authorization': 'Basic ' + btoa(SPOTIFY_CLIENT_ID + ':' + SPOTIFY_CLIENT_SECRET) },
+                    body: 'grant_type=client_credentials'
+                });
+                const data = await res.json();
+                SPOTIFY_ACCESS_TOKEN = data.access_token;
+                return SPOTIFY_ACCESS_TOKEN;
+            } catch(e) { return null; }
+        }
+        
+        async function getSpotifyImage(query, type, extra = {}) {
+            if (!query) return null;
+            const { artist = '', album = '', year = '' } = extra;
+            const key = `${type}:${query}:${artist}:${album}:${year}`.toLowerCase();
+            if (imageCache[key]) return imageCache[key];
+            const token = await getSpotifyToken();
+            if (!token) return null;
+            let url = null;
+            try {
+                if (type === 'album' && album && artist) {
+                    let targetYear = year;
+                    if (!targetYear) targetYear = extractYearFromAlbumName(album);
+                    const isTaylor = isTaylorsVersion(album);
+                    if (isTaylor) { const correctYear = getTaylorsVersionYear(album); if (correctYear) targetYear = correctYear; }
+                    let exactSearchTerm = `album:"${album}" artist:"${artist}"`;
+                    let res = await fetch(`https://api.spotify.com/v1/search?q=${encodeURIComponent(exactSearchTerm)}&type=album&limit=20`, { headers: { Authorization: `Bearer ${token}` } });
+                    let data = await res.json();
+                    let bestMatch = null, bestScore = -1;
+                    if (data.albums?.items?.length) { for (const item of data.albums.items) { const score = scoreAlbum(item, album, artist, targetYear); if (score > bestScore) { bestScore = score; bestMatch = item; } } }
+                    if (!bestMatch || bestScore < 60) { const broadSearchTerm = `album:${album} artist:${artist}`; res = await fetch(`https://api.spotify.com/v1/search?q=${encodeURIComponent(broadSearchTerm)}&type=album&limit=30`, { headers: { Authorization: `Bearer ${token}` } }); data = await res.json(); if (data.albums?.items?.length) { for (const item of data.albums.items) { const score = scoreAlbum(item, album, artist, targetYear); if (score > bestScore) { bestScore = score; bestMatch = item; } } } }
+                    if (!bestMatch || bestScore < 40) { const deluxeAlbum = `${album} Deluxe`; const deluxeSearchTerm = `album:"${deluxeAlbum}" artist:"${artist}"`; res = await fetch(`https://api.spotify.com/v1/search?q=${encodeURIComponent(deluxeSearchTerm)}&type=album&limit=20`, { headers: { Authorization: `Bearer ${token}` } }); data = await res.json(); if (data.albums?.items?.length) { for (const item of data.albums.items) { const score = scoreAlbum(item, deluxeAlbum, artist, targetYear); if (score > bestScore) { bestScore = score; bestMatch = item; } } } }
+                    if (bestMatch && bestMatch.images?.[0]?.url && bestScore > 20) url = bestMatch.images[0].url;
+                    else { const artistSearchName = getArtistSearchName(artist); const artistRes = await fetch(`https://api.spotify.com/v1/search?q=${encodeURIComponent(artistSearchName)}&type=artist&limit=1`, { headers: { Authorization: `Bearer ${token}` } }); const artistData = await artistRes.json(); if (artistData.artists?.items?.[0]?.images?.[0]?.url) url = artistData.artists.items[0].images[0].url; }
+                } else if (type === 'artist') {
+                    const artistSearchName = getArtistSearchName(query);
+                    const res = await fetch(`https://api.spotify.com/v1/search?q=${encodeURIComponent(artistSearchName)}&type=artist&limit=1`, { headers: { Authorization: `Bearer ${token}` } });
+                    const data = await res.json();
+                    url = data.artists?.items?.[0]?.images?.[0]?.url;
+                }
+                if (url) { imageCache[key] = url; saveImageCache(); }
+                return url;
+            } catch (e) { return null; }
+        }
+
         function parseCsvRow(t) { if(!t) return []; let r=[], c='', q=false; for(let i=0;i<t.length;i++){ const ch=t[i]; if(ch==='"') q=!q; else if(ch===','&&!q){ r.push(c.trim()); c=''; } else c+=ch; } r.push(c.trim()); return r; }
         
-        async function fetchChartData(ct, isBackground = false) { if(chartsConfig[ct]?.loaded) return true; const cfg = chartsConfig[ct]; if(!cfg) return false; try { const res = await fetch(cfg.url); if(!res.ok) throw new Error(`Failed ${ct}`); let csv = await res.text(); if(csv.charCodeAt(0)===0xFEFF) csv=csv.substring(1); const rows = csv.trim().split('\n').map(r=>parseCsvRow(r)); if(rows.length<2) throw new Error(`No data ${ct}`); const header = rows[0].map(h=>h.toLowerCase().trim()); const data = rows.slice(1); const find = (ks) => { for(let k of ks){ let i=header.indexOf(k); if(i!==-1) return i; } return -1; }; appState.colMaps[ct] = { date: find(['date','chart date']), position: find(['position','rank','pos']), diff: find(['dif','diff','▲▼']), song: find(['song','title','track']), album: find(['album']), artist: find(['artist','artists']), lastWeek: find(['last week','lw']), peak: find(['peak']), weeks: find(['weeks','wks']), weeksAt1: find(['weeks at 1','wks at 1']), units: find(['units','spins','sales','streams','audience']), totalUnits: find(['total units','total']), year: find(['year','ano']), chart: find(['chart']), item: find(['item']), unitsSold: find(['units sold','sales','total sales']) }; if(ct === 'radioSongs') { const audienceIndex = header.indexOf('audience'); if(audienceIndex !== -1) appState.colMaps[ct].units = audienceIndex; }
-                if(ct === 'artistStats') { appState.artistDetailsData = {}; data.forEach(r => { const artist = r[appState.colMaps.artistStats.artist]; if(!artist) return; const chart = r[appState.colMaps.artistStats.chart]; const item = r[appState.colMaps.artistStats.item]; const peak = parseInt(r[appState.colMaps.artistStats.peak])||0; const weeks = parseInt(r[appState.colMaps.artistStats.weeks])||0; const unitsSold = r[appState.colMaps.artistStats.unitsSold]||null; const totalUnits = r[appState.colMaps.artistStats.totalUnits]||null; if(!appState.artistDetailsData[artist]) appState.artistDetailsData[artist] = { 'Hot 100 Songs':[], 'Top 100 Albums':[], 'Top 50 Artists':[], 'Radio Songs':[], 'Top Streaming Albums':[], 'Top Album Sales':[], 'Streaming Songs':[], 'Digital Songs Sales':[] }; if(appState.artistDetailsData[artist][chart]) appState.artistDetailsData[artist][chart].push({ item, peak, weeks, unitsSold, totalUnits }); }); for(let a in appState.artistDetailsData) { for(let ch in appState.artistDetailsData[a]) { let entries = appState.artistDetailsData[a][ch]; entries.sort((x,y)=>x.peak-y.peak || y.weeks-x.weeks); let ones=0, tens=0; entries.forEach(e=>{ if(e.peak===1) ones++; if(e.peak<=10) tens++; }); appState.artistDetailsData[a][ch] = { entries, count: entries.length, numberOnes: ones, topTens: tens }; } } appState.allArtistsList = Object.keys(appState.artistDetailsData).sort((a,b)=>a.localeCompare(b)); } else if(ct.includes('yearEnd')) { const yi = appState.colMaps[ct].year; const byYear = {}; data.forEach(r=>{ const y=r[yi]; if(y){ if(!byYear[y]) byYear[y]=[]; byYear[y].push(r); } }); appState.chartData[ct] = byYear; } else if(ct.includes('goat')) { appState.chartData[ct] = data; } else { const di = appState.colMaps[ct].date; const groups = {}; data.forEach(r=>{ let d=r[di]; if(d){ if(d.includes('/')){ const p=d.split('/'); if(p.length===3) d=`${p[2]}-${p[1].padStart(2,'0')}-${p[0].padStart(2,'0')}`; r[di]=d; } } }); data.forEach(r=>{ const d=r[di]; if(d){ if(!groups[d]) groups[d]=[]; groups[d].push(r); } }); const sorted = Object.keys(groups).sort((a,b)=>new Date(a)-new Date(b)); appState.chartData[ct] = {}; sorted.forEach(d=>{ appState.chartData[ct][d]=groups[d]; }); if(weeklyChartList.includes(ct)) { const newGroups = {}; for (const [date, weekData] of Object.entries(appState.chartData[ct])) { newGroups[date] = weekData; } appState.chartData[ct] = newGroups; } appState.chartRunData[ct] = {}; data.forEach(r=>{ const d=r[di]; if(!d) return; const n=r[appState.colMaps[ct].song]||r[appState.colMaps[ct].album]||r[appState.colMaps[ct].artist]; const a=r[appState.colMaps[ct].artist]||'Unknown'; if(!n) return; const key=`${n.toLowerCase()}:${a.toLowerCase()}`; if(!appState.chartRunData[ct][key]) appState.chartRunData[ct][key]=[]; appState.chartRunData[ct][key].push({ date:d, position:parseInt(r[appState.colMaps[ct].position])||0, peak:parseInt(r[appState.colMaps[ct].peak])||0, weeks:parseInt(r[appState.colMaps[ct].weeks])||0, name:n, artist:a }); }); for(let k in appState.chartRunData[ct]) appState.chartRunData[ct][k].sort((a,b)=>new Date(a.date)-new Date(b.date)); const dates = Object.keys(appState.chartData[ct]); if(dates.length) { const last = dates[dates.length-1]; const recent = appState.chartData[ct][last]; if(recent?.length) { const cm = appState.colMaps[ct]; appState.top3Data[ct] = recent.sort((a,b)=>parseInt(a[cm.position])-parseInt(b[cm.position])).slice(0,3).map(r=>({ position: r[cm.position]||0, artist: r[cm.artist]||'Unknown', name: (ct==='songs'||ct==='radioSongs'||ct==='streamingSongs'||ct==='digitalSongsSales')?r[cm.song]:(ct==='albums'||ct==='topStreamingAlbums'||ct==='topAlbumSales')?r[cm.album]:r[cm.artist], weeksAt1: r[cm.weeksAt1]||0, units: r[cm.units]||null, totalUnits: r[cm.totalUnits]||null })); } } } chartsConfig[ct].loaded = true; return true; } catch(e) { console.error(`❌ Error ${ct}:`, e); return false; } }
+        function calculateDiffForChart(ct, currentData, currentDate) {
+            const weeklyCharts = [...weeklyChartList];
+            if (!weeklyCharts.includes(ct)) return currentData;
+            const dates = Object.keys(appState.chartData[ct] || {}).sort();
+            const currentIndex = dates.indexOf(currentDate);
+            if (currentIndex <= 0) return currentData;
+            const previousDate = dates[currentIndex - 1];
+            const previousData = appState.chartData[ct][previousDate];
+            const previousPositions = new Map();
+            previousData.forEach(row => { const cm = appState.colMaps[ct]; let name = ''; if (ct === 'songs' || ct === 'radioSongs' || ct === 'streamingSongs' || ct === 'digitalSongsSales') name = row[cm.song] || ''; else if (ct === 'artists') name = row[cm.artist] || ''; else name = row[cm.album] || ''; const artist = row[cm.artist] || ''; const key = `${name.toLowerCase()}:${artist.toLowerCase()}`; const position = parseInt(row[cm.position]) || 0; previousPositions.set(key, { position, row }); });
+            return currentData.map(row => { const cm = appState.colMaps[ct]; let name = ''; if (ct === 'songs' || ct === 'radioSongs' || ct === 'streamingSongs' || ct === 'digitalSongsSales') name = row[cm.song] || ''; else if (ct === 'artists') name = row[cm.artist] || ''; else name = row[cm.album] || ''; const artist = row[cm.artist] || ''; const key = `${name.toLowerCase()}:${artist.toLowerCase()}`; const currentPos = parseInt(row[cm.position]) || 0; const previous = previousPositions.get(key); let diffValue = ''; if (!previous) { let appearedBefore = false; for (let i = 0; i < currentIndex; i++) { const weekData = appState.chartData[ct][dates[i]]; const found = weekData.some(r => { let rName = ''; if (ct === 'songs' || ct === 'radioSongs' || ct === 'streamingSongs' || ct === 'digitalSongsSales') rName = r[cm.song] || ''; else if (ct === 'artists') rName = r[cm.artist] || ''; else rName = r[cm.album] || ''; const rArtist = r[cm.artist] || ''; return `${rName.toLowerCase()}:${rArtist.toLowerCase()}` === key; }); if (found) { appearedBefore = true; break; } } diffValue = appearedBefore ? 'RE' : 'NEW'; } else { const prevPos = previous.position; const diff = prevPos - currentPos; if (diff > 0) diffValue = `▲${diff}`; else if (diff < 0) diffValue = `▼${Math.abs(diff)}`; else diffValue = '='; } const newRow = [...row]; if (cm.diff !== -1) newRow[cm.diff] = diffValue; return newRow; });
+        }
+
+        async function fetchChartData(ct, isBackground = false) {
+            if(chartsConfig[ct]?.loaded) return true;
+            const cfg = chartsConfig[ct]; if(!cfg) return false;
+            const url = `${cfg.url}&_=${Date.now()}`;
+            try {
+                const res = await fetch(url);
+                if(!res.ok) throw new Error(`Failed to fetch ${ct}`);
+                let csv = await res.text();
+                if(csv.charCodeAt(0)===0xFEFF) csv=csv.substring(1);
+                const rows = csv.trim().split('\n').map(r=>parseCsvRow(r));
+                if(rows.length<2) throw new Error(`No data for ${ct}`);
+                const header = rows[0].map(h=>h.toLowerCase().trim());
+                const data = rows.slice(1);
+                const find = (ks) => { for(let k of ks){ let i=header.indexOf(k); if(i!==-1) return i; } return -1; };
+                
+                if (ct === 'statsData') {
+                    const rankIdx = find(['rank', 'pos', 'position']);
+                    const statsIdx = find(['stats', 'category']);
+                    const itemIdx = find(['artist/song', 'item', 'title', 'name']);
+                    const numberIdx = find(['number', 'value', 'total', 'count']);
+                    const categoriesMap = new Map();
+                    data.forEach(row => { const category = row[statsIdx]?.trim(); if (!category) return; if (!categoriesMap.has(category)) categoriesMap.set(category, []); categoriesMap.get(category).push({ rank: parseInt(row[rankIdx]) || 0, item: row[itemIdx]?.trim() || 'Unknown', number: row[numberIdx]?.trim() || '0' }); });
+                    for (let [cat, items] of categoriesMap) items.sort((a,b) => a.rank - b.rank);
+                    appState.statsData = { raw: data, categories: Array.from(categoriesMap.keys()), itemsMap: categoriesMap, currentCategory: Array.from(categoriesMap.keys())[0] || null, items: categoriesMap.get(Array.from(categoriesMap.keys())[0]) || [] };
+                    chartsConfig[ct].loaded = true;
+                    return true;
+                }
+                
+                appState.colMaps[ct] = {
+                    date: find(['date','chart date']), position: find(['position','rank','pos']), diff: find(['dif','diff','▲▼']),
+                    song: find(['song','title','track']), album: find(['album']), artist: find(['artist','artists']),
+                    lastWeek: find(['last week','lw']), peak: find(['peak']), weeks: find(['weeks','wks']), weeksAt1: find(['weeks at 1','wks at 1']),
+                    units: find(['units','spins','sales','streams','audience']), totalUnits: find(['total units','total']), year: find(['year','ano']),
+                    chart: find(['chart']), item: find(['item']), unitsSold: find(['units sold','sales','total sales'])
+                };
+                
+                if (ct === 'radioSongs') { const audienceIndex = header.indexOf('audience'); if (audienceIndex !== -1) appState.colMaps[ct].units = audienceIndex; }
+                
+                if(ct === 'artistStats') {
+                    appState.artistDetailsData = {};
+                    data.forEach(r => { const artist = r[appState.colMaps.artistStats.artist]; if(!artist) return; const chart = r[appState.colMaps.artistStats.chart]; const item = r[appState.colMaps.artistStats.item]; const peak = parseInt(r[appState.colMaps.artistStats.peak])||0; const weeks = parseInt(r[appState.colMaps.artistStats.weeks])||0; const unitsSold = r[appState.colMaps.artistStats.unitsSold]||null; const totalUnits = r[appState.colMaps.artistStats.totalUnits]||null; if(!appState.artistDetailsData[artist]) appState.artistDetailsData[artist] = { 'Hot 100 Songs':[], 'Top 100 Albums':[], 'Top 50 Artists':[], 'Radio Songs':[], 'Top Streaming Albums':[], 'Top Album Sales':[], 'Streaming Songs':[], 'Digital Songs Sales':[] }; if(appState.artistDetailsData[artist][chart]) appState.artistDetailsData[artist][chart].push({ item, peak, weeks, unitsSold, totalUnits }); });
+                    for(let a in appState.artistDetailsData) { for(let ch in appState.artistDetailsData[a]) { let entries = appState.artistDetailsData[a][ch]; entries.sort((x,y)=>x.peak-y.peak || y.weeks-x.weeks); appState.artistDetailsData[a][ch] = { entries, count: entries.length, numberOnes: entries.filter(e=>e.peak===1).length, topTens: entries.filter(e=>e.peak<=10).length }; } }
+                    appState.allArtistsList = Object.keys(appState.artistDetailsData).sort((a,b)=>a.localeCompare(b));
+                } else if(ct.includes('yearEnd')) {
+                    const yi = appState.colMaps[ct].year;
+                    const byYear = {};
+                    data.forEach(r=>{ const y=r[yi]; if(y){ if(!byYear[y]) byYear[y]=[]; byYear[y].push(r); } });
+                    appState.chartData[ct] = byYear;
+                    const years = Object.keys(byYear).sort((a,b)=>b-a);
+                    if(years[0] && byYear[years[0]]) { const cm = appState.colMaps[ct]; appState.top3Data[ct] = byYear[years[0]].slice(0,3).map(r=>({ position: r[cm.position]||0, artist: r[cm.artist]||'Unknown', name: ct==='yearEndSongs'?r[cm.song]:ct==='yearEndAlbums'?r[cm.album]:r[cm.artist], year: years[0] })); }
+                } else if(ct.includes('goat')) {
+                    appState.chartData[ct] = data;
+                    const cm = appState.colMaps[ct];
+                    appState.top3Data[ct] = data.slice(0,3).map(r=>({ position: r[cm.position]||0, artist: r[cm.artist]||'Unknown', name: ct.includes('Songs')?r[cm.song]:ct.includes('Albums')?r[cm.album]:r[cm.artist] }));
+                } else {
+                    const di = appState.colMaps[ct].date;
+                    const groups = {};
+                    data.forEach(r=>{ let d=r[di]; if(d){ if(d.includes('/')){ const p=d.split('/'); if(p.length===3) d=`${p[2]}-${p[1].padStart(2,'0')}-${p[0].padStart(2,'0')}`; r[di]=d; } } });
+                    data.forEach(r=>{ const d=r[di]; if(d){ if(!groups[d]) groups[d]=[]; groups[d].push(r); } });
+                    const sorted = Object.keys(groups).sort((a,b)=>new Date(a)-new Date(b));
+                    appState.chartData[ct] = {};
+                    sorted.forEach(d=>{ appState.chartData[ct][d]=groups[d]; });
+                    const weeklyCharts = [...weeklyChartList];
+                    if (weeklyCharts.includes(ct)) { const newGroups = {}; for (const [date, weekData] of Object.entries(appState.chartData[ct])) { newGroups[date] = calculateDiffForChart(ct, weekData, date); } appState.chartData[ct] = newGroups; }
+                    appState.chartRunData[ct] = {};
+                    data.forEach(r=>{ const d=r[di]; if(!d) return; const n=r[appState.colMaps[ct].song]||r[appState.colMaps[ct].album]||r[appState.colMaps[ct].artist]; const a=r[appState.colMaps[ct].artist]||'Unknown'; if(!n) return; const key=`${n.toLowerCase()}:${a.toLowerCase()}`; if(!appState.chartRunData[ct][key]) appState.chartRunData[ct][key]=[]; appState.chartRunData[ct][key].push({ date:d, position:parseInt(r[appState.colMaps[ct].position])||0, peak:parseInt(r[appState.colMaps[ct].peak])||0, weeks:parseInt(r[appState.colMaps[ct].weeks])||0, name:n, artist:a }); });
+                    for(let k in appState.chartRunData[ct]) appState.chartRunData[ct][k].sort((a,b)=>new Date(a.date)-new Date(b.date));
+                    const dates = Object.keys(appState.chartData[ct]);
+                    if(dates.length) { const last = dates[dates.length-1]; const recent = appState.chartData[ct][last]; if(recent?.length) { const cm = appState.colMaps[ct]; appState.top3Data[ct] = recent.sort((a,b)=>parseInt(a[cm.position])-parseInt(b[cm.position])).slice(0,3).map(r=>({ position: r[cm.position]||0, artist: r[cm.artist]||'Unknown', name: (ct==='songs'||ct==='radioSongs'||ct==='streamingSongs'||ct==='digitalSongsSales')?r[cm.song]:(ct==='albums'||ct==='topStreamingAlbums'||ct==='topAlbumSales')?r[cm.album]:r[cm.artist], weeksAt1: r[cm.weeksAt1]||0, units: r[cm.units]||null, totalUnits: r[cm.totalUnits]||null })); } }
+                }
+                chartsConfig[ct].loaded = true;
+                return true;
+            } catch(e) { console.error(`Error loading ${ct}:`, e); return false; }
+        }
         
-        function renderHome() { /* similar but omitted for brevity, unchanged */ appState.currentView = 'home'; const firstRowCharts = weeklyChartList.slice(0,4), secondRowCharts = weeklyChartList.slice(4,8); appContainer.innerHTML = `<div class="max-w-7xl mx-auto"><div class="text-center mb-8 md:mb-12"><h2 class="text-3xl md:text-4xl font-bold mb-4 text-white">daegon charts</h2><p class="text-gray-400 text-sm md:text-base">Your personal charts based on Last.fm data.</p></div><div class="circle-cards-grid mb-12 md:mb-16">${firstRowCharts.map(c=>`<div class="circle-card-container" data-chart="${c}"><div class="circle-card" id="circle-${c}"><div class="w-full h-full placeholder-art"><i class="fas ${chartsConfig[c]?.icon} text-2xl md:text-3xl text-gray-600"></i></div><div class="circle-card-content"><h3 class="circle-card-title">${chartsConfig[c]?.title}</h3></div></div><div class="circle-card-label text-xs md:text-sm">${chartsConfig[c]?.title}</div></div>`).join('')}</div><div class="circle-cards-grid mb-12 md:mb-16">${secondRowCharts.map(c=>`<div class="circle-card-container" data-chart="${c}"><div class="circle-card" id="circle-${c}"><div class="w-full h-full placeholder-art"><i class="fas ${chartsConfig[c]?.icon} text-2xl md:text-3xl text-gray-600"></i></div><div class="circle-card-content"><h3 class="circle-card-title">${chartsConfig[c]?.title}</h3></div></div><div class="circle-card-label text-xs md:text-sm">${chartsConfig[c]?.title}</div></div>`).join('')}</div><div class="mb-12 md:mb-16"><h3 class="text-xl md:text-2xl font-bold mb-6 section-title text-white">Weekly Charts</h3><div id="weeklyChartsGrid" class="weekly-charts-grid">${weeklyChartList.map(c=>`<div class="chart-card cursor-pointer" data-chart="${c}"><div class="flex items-center justify-between mb-2"><h4 class="font-semibold text-white">${chartsConfig[c]?.title}</h4><span class="text-xs text-gray-400">Top 3</span></div><div class="loading-skeleton h-20"></div></div>`).join('')}</div></div></div>`; document.querySelectorAll('.chart-card, .circle-card-container').forEach(el=>el.addEventListener('click',()=>showChart(el.dataset.chart))); setTimeout(()=>loadCircleImages(),100); setupBackToTop(); }
-        async function loadCircleImages() { for(let ct of weeklyChartList) { let top = appState.top3Data[ct]?.[0]; if(!top) continue; let q='', t=''; if(ct==='songs'||ct==='radioSongs'||ct==='streamingSongs'||ct==='digitalSongsSales'){ q=top.artist; t='artist'; } else if(ct==='albums'||ct==='topStreamingAlbums'||ct==='topAlbumSales'){ let a=top.name?.includes('(')?top.name.substring(0,top.name.indexOf('(')).trim():top.name; q=`${top.artist} ${a}`; t='album'; } else{ q=top.name; t='artist'; } if(q && q!=='Unknown'){ let url=await getSpotifyImage(q,t); let el=document.getElementById(`circle-${ct}`); if(el&&url){ el.innerHTML=`<img src="${url}" class="w-full h-full object-cover">`; el.classList.remove('placeholder-art'); } } } }
-        function showChart(ct, dateToSet=null){ appState.lastChart = appState.activeChart; appState.lastChartDate = appState.currentDate; appState.activeChart = ct; const isYear = ct.includes('yearEnd'), isGoat = ct.includes('goat'); if(isYear){ let years = Object.keys(appState.chartData[ct]||{}).sort((a,b)=>b-a); appState.currentYear = years[0]||new Date().getFullYear().toString(); } else { let dates = Object.keys(appState.chartData[ct]||{}); let recent = dates.length?dates[dates.length-1]:null; if(dateToSet && appState.chartData[ct]?.[dateToSet]) appState.currentDate = dateToSet; else if(appState.sharedDate && appState.chartData[ct]?.[appState.sharedDate]) appState.currentDate = appState.sharedDate; else appState.currentDate = recent; appState.sharedDate = appState.currentDate; } renderChartView(); }
-        function renderChartView(){ let ct=appState.activeChart, isYear=ct.includes('yearEnd'), isGoat=ct.includes('goat'); const nav = isYear?Object.entries(chartsConfig).filter(([k])=>k.includes('yearEnd')):isGoat?Object.entries(chartsConfig).filter(([k])=>k.includes('goat')):Object.entries(chartsConfig).filter(([k])=>!k.includes('yearEnd')&&!k.includes('goat')&&k!=='artistStats'); appContainer.innerHTML = `<div class="max-w-4xl mx-auto"><button id="backBtn" class="back-button mb-4 flex items-center text-accent"><i class="fas fa-arrow-left mr-2"></i> Back</button><div class="mb-4"><h2 class="text-xl md:text-3xl font-bold text-center text-white">${isYear?'Year-End':isGoat?'GOAT':'Weekly Charts'}</h2><div class="nav-charts-wrapper flex flex-wrap justify-center gap-2 mt-2">${nav.map(([k,c])=>`<button data-chart="${k}" class="chart-nav-btn btn-hover ${appState.activeChart===k?'active':''} text-xs md:text-sm px-3 py-1 rounded">${c.title}</button>`).join('')}</div></div><div class="mb-4"><h3 class="text-lg font-bold text-center text-white">${chartsConfig[ct]?.title}</h3>${isYear?`<div class="flex justify-center gap-2 mt-2">${Object.keys(appState.chartData[ct]||{}).sort((a,b)=>b-a).map(y=>`<button class="year-btn ${y===appState.currentYear?'active':''}" data-year="${y}">${y}</button>`).join('')}</div>`:isGoat?'':`<div class="flex justify-center mt-2"><input type="text" id="weekPicker" class="flatpickr-input text-sm"></div>`}</div><div class="chart-container" id="chartContainer">${renderChartItems()}</div></div>`; setupChartListeners(); if(!isYear && !isGoat && appState.chartData[ct]){ let dates = Object.keys(appState.chartData[ct]||{}); if(dates.length){ flatpickr("#weekPicker", { enable: dates, defaultDate: appState.currentDate, dateFormat: "Y-m-d", onChange: (_,ds)=>{ if(ds){ appState.currentDate=ds; appState.sharedDate=ds; document.getElementById('chartContainer').innerHTML=renderChartItems(); setTimeout(()=>loadImages(),50); } } }); } } if(isYear) document.querySelectorAll('.year-btn').forEach(b=>b.addEventListener('click',function(){ appState.currentYear=this.dataset.year; document.querySelectorAll('.year-btn').forEach(x=>x.classList.remove('active')); this.classList.add('active'); document.getElementById('chartContainer').innerHTML=renderChartItems(); setTimeout(()=>loadImages(),50); })); setTimeout(()=>loadImages(),50); setupBackToTop(); }
-        function renderChartItems(){ let ct=appState.activeChart, cm=appState.colMaps[ct]||{}, items=[]; if(ct.includes('yearEnd')) items=appState.chartData[ct]?.[appState.currentYear]||[]; else if(ct.includes('goat')) items=appState.chartData[ct]||[]; else items=appState.chartData[ct]?.[appState.currentDate]||[]; if(!items.length) return '<div class="text-center p-8 text-gray-400">No data</div>'; let sorted = [...items].sort((a,b)=>(parseInt(a[cm.position])||999)-(parseInt(b[cm.position])||999)).slice(0,100); return sorted.map((row,idx)=>{ let pos=parseInt(row[cm.position])||0, artist=row[cm.artist]||'Unknown', name = (ct.includes('Songs')||ct==='songs'||ct==='radioSongs'||ct==='streamingSongs'||ct==='digitalSongsSales')?(row[cm.song]||'Unknown'):(ct.includes('Albums')||ct==='albums'||ct==='topStreamingAlbums'||ct==='topAlbumSales')?(row[cm.album]||'Unknown'):artist; let runKey = `${name.toLowerCase()}:${artist.toLowerCase()}`; return `<div class="chart-card-item" data-chart="${ct}" data-date="${appState.currentDate}"><div class="flex items-start"><div class="rank-number">${pos}</div><div class="mx-3"><div class="spotify-image" id="img-${ct}-${idx}"><div class="w-full h-full placeholder-art"><i class="fas fa-music text-gray-600"></i></div></div></div><div class="flex-grow"><p class="font-bold text-base"><span class="artist-link cursor-pointer" data-artist="${artist}">${name}</span></p><p class="text-gray-600 text-sm"><span class="artist-link" data-artist="${artist}">${artist}</span></p><button class="text-accent text-xs chart-run-link mt-1" data-chart="${ct}" data-key="${runKey}">📈 Chart Run</button></div></div></div>`; }).join(''); }
-        function setupChartListeners(){ document.getElementById('backBtn')?.addEventListener('click',()=>{ if(appState.lastChart) showChart(appState.lastChart, appState.lastChartDate); else navigateBack(); }); document.querySelectorAll('.chart-nav-btn').forEach(b=>b.addEventListener('click',()=>showChart(b.dataset.chart))); setTimeout(()=>{ document.querySelectorAll('.artist-link').forEach(l=>l.addEventListener('click',(e)=>{ e.stopPropagation(); renderArtistPage(l.dataset.artist); })); document.querySelectorAll('.chart-run-link').forEach(b=>{ let ct=b.dataset.chart, key=b.dataset.key; b.addEventListener('click',()=>showRunModal(ct,key)); }); },100); }
-        function showRunModal(ct,key){ let run = appState.chartRunData[ct]?.[key]||[]; let [name,artist] = key.split(':'); if(!run.length) modalContent.innerHTML='<p class="text-center text-gray-400">No chart run data.</p>'; else{ let peakPos = Math.min(...run.map(r=>r.position)); let totalWeeks = run.length; let firstEntry = run[0]?.date; let peakDate = run.find(r=>r.position===peakPos)?.date; modalContent.innerHTML = `<div><h3 class="text-xl font-bold mb-2">${name} by ${artist}</h3><div class="run-meta-bar"><span>📅 First entry: ${firstEntry || '—'}</span><span>🏆 Peak: #${peakPos} (${peakDate || '—'})</span><span>📆 Weeks: ${totalWeeks}</span></div><div class="chart-run-grid">${run.map((r,i,a)=>{ let cls='run-steady'; if(i>0){ if(r.position<a[i-1].position) cls='run-up'; else if(r.position>a[i-1].position) cls='run-down'; } if(r.position===peakPos && i>0 && r.position<a[i-1].position) cls='run-peak'; if(r.position===1) cls='run-number-one'; if(i===0) cls='run-new'; return `<div class="chart-run-card ${cls}"><span class="font-medium">${r.date}</span><span class="font-bold">#${r.position}</span><span>${cls==='run-up'?'▲':cls==='run-down'?'▼':''}</span></div>`; }).join('')}</div></div>`; } modal.classList.add('active'); }
-        async function loadImages(){ let ct=appState.activeChart, cm=appState.colMaps[ct]||{}, items=[]; if(ct.includes('yearEnd')) items=appState.chartData[ct]?.[appState.currentYear]||[]; else if(ct.includes('goat')) items=appState.chartData[ct]||[]; else items=appState.chartData[ct]?.[appState.currentDate]||[]; for(let i=0;i<items.length;i++){ let row=items[i], artist=row[cm.artist]||'Unknown', q='', t=''; if(ct.includes('Songs')||ct==='songs'||ct==='radioSongs'||ct==='streamingSongs'||ct==='digitalSongsSales'){ q=artist; t='artist'; } else if(ct.includes('Albums')||ct==='albums'||ct==='topStreamingAlbums'||ct==='topAlbumSales'){ let alb=row[cm.album]||''; q=`${artist} ${alb}`; t='album'; } else{ q=artist; t='artist'; } if(q && q!=='Unknown'){ let url = await getSpotifyImage(q,t); let el = document.getElementById(`img-${ct}-${i}`); if(el && url){ el.innerHTML=`<img src="${url}" class="w-full h-full object-cover">`; el.classList.remove('placeholder-art'); } } } }
-        function renderArtistPage(artist){ let data = appState.artistDetailsData[artist]; if(!data){ appContainer.innerHTML = `<div class="max-w-4xl mx-auto text-center p-6"><button id="backBtn" class="back-button mb-4 text-accent"><i class="fas fa-arrow-left mr-2"></i> Back</button><h2 class="text-2xl font-bold text-white">Artist not found</h2></div>`; document.getElementById('backBtn')?.addEventListener('click',()=>navigateBack()); return; } getSpotifyImage(artist,'artist').then(img=>{ let sections = ['Top 50 Artists','Hot 100 Songs','Radio Songs','Top 100 Albums','Top Streaming Albums','Top Album Sales','Streaming Songs','Digital Songs Sales'].map(name=>{ let cd = data[name]; if(!cd||cd.count===0) return ''; let isArtist = name==='Top 50 Artists'; let entriesList = cd.entries; let displayLimit = 20; let hasMore = entriesList.length > displayLimit; let containerId = `list-${name.replace(/\s/g,'')}`; let entriesHtml = entriesList.slice(0,displayLimit).map(e=>`<div class="entry-item"><span class="item-name">${e.item}${e.unitsSold?` <span class="units-badge text-xs">${e.unitsSold}</span>`:''}${e.totalUnits?` <span class="units-badge text-xs">${e.totalUnits} total</span>`:''}</span><div class="entry-stats"><span>Peak #${e.peak}</span><span>${e.weeks} wks</span></div></div>`).join(''); let extraHtml = ''; if(hasMore) extraHtml = `<div id="more-${name.replace(/\s/g,'')}" style="display:none;">${entriesList.slice(displayLimit).map(e=>`<div class="entry-item"><span class="item-name">${e.item}${e.unitsSold?` <span class="units-badge">${e.unitsSold}</span>`:''}${e.totalUnits?` <span class="units-badge">${e.totalUnits} total</span>`:''}</span><div class="entry-stats"><span>Peak #${e.peak}</span><span>${e.weeks} wks</span></div></div>`).join('')}</div><button class="show-more-btn" data-target="more-${name.replace(/\s/g,'')}">Show more (${entriesList.length-displayLimit} remaining)</button>`; return `<div class="artist-list-card mb-6"><div class="artist-list-header"><h3 class="font-bold text-gray-800">${name}</h3><p class="text-xs text-gray-500">${isArtist?`Peak #${cd.entries[0]?.peak||0} / ${cd.entries[0]?.weeks||0} Weeks`:`${cd.count} Entries / ${cd.numberOnes} #1's / ${cd.topTens} Top 10's`}</p></div><div id="${containerId}">${entriesHtml}</div>${extraHtml}</div>`; }).join(''); appContainer.innerHTML = `<div class="max-w-4xl mx-auto"><button id="backBtn" class="back-button mb-4 text-accent"><i class="fas fa-arrow-left mr-2"></i> Back</button>${img?`<img src="${img}" class="artist-header-image">`:`<div class="artist-header-image placeholder-art flex items-center justify-center"><i class="fas fa-user text-4xl text-gray-500"></i></div>`}<h1 class="artist-name-large">${artist}</h1><p class="text-gray-400 text-sm mb-6">Detailed Chart History</p><div>${sections}</div></div>`; document.getElementById('backBtn')?.addEventListener('click',()=>navigateBack()); document.querySelectorAll('.show-more-btn').forEach(btn=>btn.addEventListener('click',function(){ let targetId = this.dataset.target; let extraDiv = document.getElementById(targetId); if(extraDiv){ extraDiv.style.display = 'block'; this.style.display = 'none'; } })); setupBackToTop(); }); }
-        function showAllArtists(){ appState.currentView='allArtists'; let artists = appState.allArtistsList; if (!artists.length) { appContainer.innerHTML = `<div class="max-w-6xl mx-auto"><button id="backBtn" class="back-button mb-4 text-accent"><i class="fas fa-arrow-left mr-2"></i> Back</button><div class="loader mx-auto"></div></div>`; document.getElementById('backBtn')?.addEventListener('click',navigateBack); return; } appContainer.innerHTML = `<div class="max-w-6xl mx-auto"><button id="backBtn" class="back-button mb-4 text-accent"><i class="fas fa-arrow-left mr-2"></i> Back</button><h2 class="text-2xl font-bold mb-4 section-title">All Artists Entries</h2><input type="text" id="artistSearch" class="border p-2 rounded mb-4 w-full" placeholder="Search artists..."><div id="artistsGrid" class="artists-icons-grid">${artists.map(a=>`<div class="artist-icon-card" data-artist="${a}"><div class="artist-icon-placeholder w-24 h-24 rounded-full bg-gray-800 flex items-center justify-center"><i class="fas fa-user text-3xl text-accent"></i></div><div class="artist-icon-name text-center mt-2">${a}</div></div>`).join('')}</div></div>`; document.getElementById('backBtn')?.addEventListener('click',navigateBack); document.getElementById('artistSearch').addEventListener('input',function(){ let term=this.value.toLowerCase(); let filtered=artists.filter(a=>a.toLowerCase().includes(term)); document.getElementById('artistsGrid').innerHTML=filtered.map(a=>`<div class="artist-icon-card" data-artist="${a}"><div class="artist-icon-placeholder w-24 h-24 rounded-full bg-gray-800 flex items-center justify-center"><i class="fas fa-user text-3xl text-accent"></i></div><div class="artist-icon-name">${a}</div></div>`).join(''); attachArtistClicks(); }); attachArtistClicks(); setupBackToTop(); }
+        async function fetchChartBeat() {
+            for(let [key, cfg] of Object.entries(chartBeatConfig)) {
+                try {
+                    const res = await fetch(cfg.url);
+                    let csv = await res.text();
+                    if(csv.charCodeAt(0)===0xFEFF) csv=csv.substring(1);
+                    const rows = csv.trim().split('\n').map(r=>parseCsvRow(r));
+                    const header = rows[0].map(h=>h.toLowerCase().trim());
+                    const find = (ks)=>{ for(let k of ks){ let i=header.indexOf(k); if(i!==-1) return i; } return -1; };
+                    const di = find(['date','data']), ti = find(['title','título']), xi = find(['text','conteúdo']), ai = find(['artist','artista']), li = find(['chartlink']);
+                    const processed = rows.slice(1).map(r=>({ title: r[ti]||'NO TITLE', publicationDate: r[di]||'NO DATE', artist: r[ai]||null, fullText: r[xi]||'No content available.', chartLink: r[li]||null, imageUrl: null })).reverse();
+                    appState.chartBeatData[key] = processed;
+                    setTimeout(async () => { for(let i=0;i<processed.length;i++) { if(processed[i].artist) { const artistSearchName = getArtistSearchName(processed[i].artist); const url = await getSpotifyImage(artistSearchName, 'artist'); if(url) processed[i].imageUrl = url; } } }, 100);
+                } catch(e) { console.error(key, e); appState.chartBeatData[key]=[]; }
+            }
+        }
+
+        function showMessage(type, text) {
+            appContainer.innerHTML = type==='loading'?`<div class="flex flex-col items-center justify-center p-8"><div class="loader mb-4"></div><p class="text-gray-400">${text}</p></div>`:`<div class="flex flex-col items-center justify-center p-8"><i class="fas fa-exclamation-triangle text-red-500 text-4xl mb-4"></i><p class="text-center text-red-500">${text}</p><button id="retryBtn" class="mt-4 px-4 py-2 bg-accent text-black rounded-md">Try Again</button></div>`;
+            document.getElementById('retryBtn')?.addEventListener('click', init);
+        }
+        
+        function copyItemData(rowData) {
+            const { name, artist, pos, diffSymbol, lw, pk, wks, w1, units, total, ct, title, chartType, date, isAlbum, unitsLabel, isRadio, isStreaming, isDigital } = rowData;
+            let diffText = '';
+            if (diffSymbol === 'NEW') diffText = 'new';
+            else if (diffSymbol === 'RE') diffText = 'returns at';
+            else if (diffSymbol && diffSymbol !== '=') diffText = diffSymbol;
+            else if (diffSymbol === '=') diffText = '=';
+            const w1Text = w1 && w1 > 0 ? (w1 === 1 ? `*${w1} week at #1*` : `*${w1} weeks at #1*`) : '';
+            const weekText = wks ? ` [${wks} week${wks !== 1 ? 's' : ''}]` : '';
+            const peakText = pk && pk !== pos ? ` *peak: #${pk}*` : '';
+            let unitsPart = '';
+            if (units && units !== '0') {
+                if (unitsLabel) unitsPart = ` ${unitsLabel}: ${units}`;
+                else if (isRadio) unitsPart = ` Audience: ${units}`;
+                else if (isStreaming) unitsPart = ` Streams: ${units}`;
+                else if (isDigital) unitsPart = ` Sales: ${units}`;
+                else unitsPart = ` Units: ${units}`;
+            }
+            const totalPart = total ? ` (${total} total${total.includes('million') ? '' : ' units'})` : '';
+            let debutOrPeak = '';
+            if (diffSymbol === 'NEW') debutOrPeak = ` estreia${unitsPart ? ` com${unitsPart}` : ''}${totalPart}.`;
+            else if (diffSymbol === 'RE') debutOrPeak = ` retorna${unitsPart ? ` com${unitsPart}` : ''}${totalPart}.`;
+            else if (pos === 1 && w1 && w1 > 0) debutOrPeak = ` está em #1 pela ${w1 === 1 ? 'primeira vez' : `${w1}ª vez`} na semana de ${date}.`;
+            else debutOrPeak = ` está em #${pos}${diffText ? ` (${diffText})` : ''} na semana de ${date}.${unitsPart}${totalPart}${weekText}${peakText}${w1Text ? ` ${w1Text}` : ''}`;
+            let copyText = `Daegon's ${title}: #${pos}${diffSymbol && diffSymbol !== 'NEW' && diffSymbol !== 'RE' ? `(${diffSymbol})` : diffSymbol === 'NEW' ? '(new)' : diffSymbol === 'RE' ? '(re)' : ''} ${name}, ${artist}${weekText}${peakText ? ` ${peakText}` : ''}. ${debutOrPeak}`;
+            if (w1Text && pos === 1 && debutOrPeak.includes('está em #1')) copyText = `Daegon's ${title}: #${pos}${diffSymbol && diffSymbol !== 'NEW' && diffSymbol !== 'RE' ? `(${diffSymbol})` : ''} ${name}, ${artist}${weekText}. ${debutOrPeak}`;
+            navigator.clipboard.writeText(copyText);
+            const toast = document.createElement('div');
+            toast.textContent = '✓ Data copied to clipboard!';
+            toast.style.position = 'fixed'; toast.style.bottom = '20px'; toast.style.left = '50%'; toast.style.transform = 'translateX(-50%)'; toast.style.backgroundColor = '#FFD700'; toast.style.color = '#000'; toast.style.padding = '8px 16px'; toast.style.borderRadius = '8px'; toast.style.fontSize = '14px'; toast.style.fontWeight = 'bold'; toast.style.zIndex = '1000'; toast.style.boxShadow = '0 2px 10px rgba(0,0,0,0.2)'; document.body.appendChild(toast); setTimeout(() => toast.remove(), 2000);
+        }
+        
+        function renderChartCard(ct, title) {
+            const top = appState.top3Data[ct] || [];
+            const isGoat = ct.includes('goat');
+            if (!top.length) return `<div class="chart-card cursor-pointer transition-all duration-300 hover:border-accent shadow-sm ${isGoat ? 'hover:border-gold goat-card-border' : ''}" data-chart="${ct}"><div class="flex items-center justify-between mb-2 md:mb-3"><h4 class="font-semibold text-sm md:text-base text-white">${title}</h4><span class="text-xs text-gray-400 bg-gray-800 px-2 py-1 rounded-full">Loading...</span></div><div class="loading-skeleton h-24"></div></div>`;
+            return `<div class="chart-card cursor-pointer transition-all duration-300 hover:border-accent shadow-sm ${isGoat ? 'hover:border-gold goat-card-border' : ''}" data-chart="${ct}"><div class="flex items-center justify-between mb-2 md:mb-3"><h4 class="font-semibold text-sm md:text-base text-white">${title}</h4><span class="text-xs text-gray-400 bg-gray-800 px-2 py-1 rounded-full">Top ${top.length}</span></div><div class="space-y-1 md:space-y-2">${top.map((item, i) => `<div class="flex items-center text-xs md:text-sm text-gray-300"><span class="font-bold w-5 md:w-6 ${i===0?'text-accent':'text-gray-400'} ${isGoat && i===0 ? 'goat-text' : ''}">${item.position}</span><span class="truncate break-text">${item.name || 'Unknown'}</span></div>`).join('')}</div></div>`;
+        }
+        
+        function renderHome() {
+            appState.currentView = 'home';
+            const h100=appState.chartBeatData.hot100[0], a50=appState.chartBeatData.artists[0], a100=appState.chartBeatData.top100Albums[0];
+            const firstRowCharts = weeklyChartList.slice(0, 4);
+            const secondRowCharts = weeklyChartList.slice(4, 8);
+            appContainer.innerHTML = `<div class="max-w-7xl mx-auto"><div class="text-center mb-8 md:mb-12"><h2 class="text-3xl md:text-4xl font-bold mb-4 text-white">daegon charts</h2><p class="text-gray-400 text-sm md:text-base">Your personal charts based on Last.fm data. Track your most played songs, artists, and albums.</p></div><div class="circle-cards-grid mb-12 md:mb-16">${firstRowCharts.map(c=>`<div class="circle-card-container" data-chart="${c}"><div class="circle-card" id="circle-${c}"><div class="w-full h-full placeholder-art"><i class="fas ${chartsConfig[c]?.icon} text-2xl md:text-3xl text-gray-600"></i></div><div class="circle-card-content"><h3 class="circle-card-title">${chartsConfig[c]?.title}</h3></div></div><div class="circle-card-label text-xs md:text-sm">${chartsConfig[c]?.title}</div></div>`).join('')}</div><div class="circle-cards-grid mb-12 md:mb-16">${secondRowCharts.map(c=>`<div class="circle-card-container" data-chart="${c}"><div class="circle-card" id="circle-${c}"><div class="w-full h-full placeholder-art"><i class="fas ${chartsConfig[c]?.icon} text-2xl md:text-3xl text-gray-600"></i></div><div class="circle-card-content"><h3 class="circle-card-title">${chartsConfig[c]?.title}</h3></div></div><div class="circle-card-label text-xs md:text-sm">${chartsConfig[c]?.title}</div></div>`).join('')}</div>${(h100||a50||a100)?`<div class="mb-12 md:mb-16"><h3 class="text-xl md:text-2xl font-bold mb-6 section-title text-white">Chart Beat - Latest News</h3><div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">${h100?`<div class="blog-card cursor-pointer" onclick="showChartBeat('hot100')"><img src="${h100.imageUrl||'https://via.placeholder.com/400x200?text=No+Image'}" class="w-full h-40 md:h-48 object-cover" onerror="this.src='https://via.placeholder.com/400x200?text=No+Image'"><div class="p-3"><span class="text-xs text-accent font-semibold">${h100.publicationDate}</span><h4 class="font-bold text-sm md:text-lg mt-1 text-white line-clamp-2">${h100.title}</h4></div></div>`:''}${a50?`<div class="blog-card cursor-pointer" onclick="showChartBeat('artists')"><img src="${a50.imageUrl||'https://via.placeholder.com/400x200?text=No+Image'}" class="w-full h-40 md:h-48 object-cover" onerror="this.src='https://via.placeholder.com/400x200?text=No+Image'"><div class="p-3"><span class="text-xs text-accent font-semibold">${a50.publicationDate}</span><h4 class="font-bold text-sm md:text-lg mt-1 text-white line-clamp-2">${a50.title}</h4></div></div>`:''}${a100?`<div class="blog-card cursor-pointer" onclick="showChartBeat('top100Albums')"><img src="${a100.imageUrl||'https://via.placeholder.com/400x200?text=No+Image'}" class="w-full h-40 md:h-48 object-cover" onerror="this.src='https://via.placeholder.com/400x200?text=No+Image'"><div class="p-3"><span class="text-xs text-accent font-semibold">${a100.publicationDate}</span><h4 class="font-bold text-sm md:text-lg mt-1 text-white line-clamp-2">${a100.title}</h4></div></div>`:''}</div></div>`:''}<div class="mb-12 md:mb-16"><h3 class="text-xl md:text-2xl font-bold mb-6 section-title text-white">Weekly Charts</h3><div id="weeklyChartsGrid" class="weekly-charts-grid">${weeklyChartList.map(c=>renderChartCard(c, chartsConfig[c]?.title)).join('')}</div></div><div class="mb-12 md:mb-16"><h3 class="text-xl md:text-2xl font-bold mb-6 section-title text-white">Year-End Charts</h3><div id="yearEndChartsGrid" class="weekly-charts-grid">${yearEndList.map(c=>renderChartCard(c, chartsConfig[c]?.title)).join('')}</div></div><div class="mb-12 md:mb-16"><h3 class="text-xl md:text-2xl font-bold mb-6 section-title goat-title text-white">Greatest of All Time</h3><div id="goatChartsGrid" class="weekly-charts-grid">${goatList.map(c=>renderChartCard(c, chartsConfig[c]?.title)).join('')}</div></div></div>`;
+            document.querySelectorAll('.chart-card, .circle-card-container').forEach(el=>el.addEventListener('click',()=>showChart(el.dataset.chart)));
+            setTimeout(()=>loadCircleImages(),100);
+            setupBackToTop();
+        }
+        
+        function updateHomeCharts() {
+            const weeklyGrid = document.getElementById('weeklyChartsGrid');
+            const yearEndGrid = document.getElementById('yearEndChartsGrid');
+            const goatGrid = document.getElementById('goatChartsGrid');
+            if (weeklyGrid) weeklyGrid.innerHTML = weeklyChartList.map(c=>renderChartCard(c, chartsConfig[c]?.title)).join('');
+            if (yearEndGrid) yearEndGrid.innerHTML = yearEndList.map(c=>renderChartCard(c, chartsConfig[c]?.title)).join('');
+            if (goatGrid) goatGrid.innerHTML = goatList.map(c=>renderChartCard(c, chartsConfig[c]?.title)).join('');
+            document.querySelectorAll('.chart-card').forEach(el=>el.addEventListener('click',()=>showChart(el.dataset.chart)));
+        }
+        
+        async function loadCircleImages() {
+            for(let ct of weeklyChartList) { let top = appState.top3Data[ct]?.[0]; if(!top) continue; let q='', t='', extra = {}; if(ct==='songs'||ct==='radioSongs'||ct==='streamingSongs'||ct==='digitalSongsSales'){ q=top.artist; t='artist'; } else if(ct==='albums'||ct==='topStreamingAlbums'||ct==='topAlbumSales'){ let a=top.name; q=`${top.artist} ${a}`; t='album'; extra = { album: top.name, artist: top.artist }; } else{ q=top.name; t='artist'; } if(q && q!=='Unknown'){ let searchQuery = t === 'artist' ? getArtistSearchName(q) : q; let url=await getSpotifyImage(searchQuery, t, extra); let el=document.getElementById(`circle-${ct}`); if(el&&url){ el.innerHTML=`<img src="${url}" class="w-full h-full object-cover">`; el.classList.remove('placeholder-art'); } } }
+        }
+        
+        function showChartBeat(blog){ appState.currentBlog=blog; appState.activeTag=null; appState.currentView='chartBeat'; renderChartBeatPage(); }
+        
+        function renderChartBeatPage(){
+            let arts = appState.chartBeatData[appState.currentBlog]||[];
+            const allTags = new Set(); arts.forEach(a=>{ if(a.artist) allTags.add(`#${a.artist.toLowerCase()}`); });
+            if(appState.activeTag) arts = arts.filter(a=>a.artist && `#${a.artist.toLowerCase()}`===appState.activeTag);
+            appContainer.innerHTML = `<div class="max-w-6xl mx-auto"><button id="backBtn" class="back-button mb-4 md:mb-6 flex items-center text-accent hover:text-accent-dark font-semibold transition-colors text-sm md:text-base"><i class="fas fa-arrow-left mr-2"></i> Back to Home</button><div class="text-center mb-6 md:mb-8"><h2 class="text-2xl md:text-3xl font-bold mb-2 text-white">Chart Beat</h2><p class="text-gray-400 text-sm md:text-base">News and insights about the music charts</p></div><div class="flex justify-center mb-6 md:mb-8 border-b border-gray-800 overflow-x-auto pb-1"><button class="chart-beat-nav-btn px-3 md:px-4 py-2 text-sm md:text-base font-medium whitespace-nowrap ${appState.currentBlog==='hot100'?'active':''}" data-blog="hot100">Hot 100 Songs</button><button class="chart-beat-nav-btn px-3 md:px-4 py-2 text-sm md:text-base font-medium whitespace-nowrap ${appState.currentBlog==='artists'?'active':''}" data-blog="artists">Top 50 Artists</button><button class="chart-beat-nav-btn px-3 md:px-4 py-2 text-sm md:text-base font-medium whitespace-nowrap ${appState.currentBlog==='top100Albums'?'active':''}" data-blog="top100Albums">Top 100 Albums</button></div>${allTags.size?`<div class="filter-bar"><span class="text-sm text-gray-300"><i class="fas fa-tags mr-1"></i> Filter by artist:</span><div class="flex flex-wrap gap-2">${Array.from(allTags).map(t=>`<span class="tag ${appState.activeTag===t?'active':''}" data-tag="${t}">${t}</span>`).join('')}</div>${appState.activeTag?`<span class="clear-filter"><i class="fas fa-times mr-1"></i>Clear filter</span>`:''}</div>`:''}<div><h3 class="text-lg md:text-xl font-bold mb-4 md:mb-6 section-title text-white">All Articles</h3><div class="space-y-4 md:space-y-6">${arts.length?arts.map((a,i)=>`<div class="blog-card bg-black rounded-lg border border-gray-800 p-3 md:p-4 shadow-sm"><div class="flex flex-col sm:flex-row"><div class="sm:w-1/4 mb-3 sm:mb-0"><img src="${a.imageUrl||'https://via.placeholder.com/400x200?text=No+Image'}" class="w-full h-24 sm:h-32 object-cover rounded" onerror="this.src='https://via.placeholder.com/400x200?text=No+Image'"></div><div class="sm:w-3/4 sm:pl-4 md:pl-6"><span class="text-xs text-accent font-semibold">${a.publicationDate}</span><h4 class="font-bold text-base md:text-lg mt-1 mb-2 text-white break-text">${a.title}</h4><p class="text-gray-400 text-xs md:text-sm line-clamp-3">${a.fullText.substring(0,150)}...</p><div class="tag-container mt-2">${a.artist?`<span class="tag" data-tag="#${a.artist.toLowerCase()}">#${a.artist.toLowerCase()}</span>`:''}</div><button class="read-more-btn mt-2 md:mt-3 text-accent text-xs md:text-sm font-semibold" data-blog="${appState.currentBlog}" data-idx="${i}">Read More <i class="fas fa-arrow-right ml-1 text-xs"></i></button></div></div></div>`).join(''):`<div class="text-center py-6 md:py-8 text-gray-400"><i class="fas fa-newspaper text-3xl md:text-4xl mb-3"></i><p class="text-sm md:text-base">No articles available</p></div>`}</div></div></div>`;
+            document.getElementById('backBtn')?.addEventListener('click',()=>navigateBack());
+            document.querySelectorAll('.chart-beat-nav-btn').forEach(b=>b.addEventListener('click',()=>{ appState.currentBlog=b.dataset.blog; appState.activeTag=null; renderChartBeatPage(); }));
+            document.querySelectorAll('.tag').forEach(t=>t.addEventListener('click',(e)=>{ e.stopPropagation(); appState.activeTag=t.dataset.tag; renderChartBeatPage(); }));
+            document.querySelector('.clear-filter')?.addEventListener('click',()=>{ appState.activeTag=null; renderChartBeatPage(); });
+            document.querySelectorAll('.read-more-btn').forEach(b=>b.addEventListener('click',()=>renderArticleModal(b.dataset.blog,parseInt(b.dataset.idx))));
+            setupBackToTop();
+        }
+        
+        function renderArticleModal(blog,idx){
+            const art = appState.chartBeatData[blog]?.[idx];
+            if(!art) return;
+            let txt = art.fullText;
+            txt = txt.replace(/\b(\w+'\w+)\b/g,'<strong>$1</strong>').replace(/\b(\d+)\b/g,'<em>$1</em>').replace(/\b(\w+(?:\s+\w+)*)\s+by\s+(\w+(?:\s+\w+)*)\b/gi,'<strong>$1</strong> by <strong>$2</strong>');
+            modalContent.innerHTML = `<div><div class="mb-4"><img src="${art.imageUrl||'https://via.placeholder.com/800x400?text=No+Image'}" class="w-full h-48 md:h-64 object-cover rounded-lg mb-4" onerror="this.src='https://via.placeholder.com/800x400?text=No+Image'"><span class="text-xs md:text-sm text-accent font-semibold">${art.publicationDate}</span><h3 class="text-xl md:text-2xl font-bold mt-1 mb-3 text-black break-text">${art.title}</h3><p class="text-gray-800 text-sm md:text-base whitespace-pre-line" style="text-align:justify">${txt}</p>${art.artist?`<div class="mt-4 flex flex-wrap gap-2"><span class="tag" data-tag="#${art.artist.toLowerCase()}">#${art.artist.toLowerCase()}</span></div>`:''}${art.chartLink?`<div class="mt-6 md:mt-8 text-center"><button class="px-3 md:px-4 py-2 bg-accent text-black rounded-md hover:bg-accent-dark transition-colors text-sm md:text-base" onclick="showChart('${art.chartLink}','${art.publicationDate}')">See the full chart <i class="fas fa-arrow-right ml-2"></i></button></div>`:''}</div></div>`;
+            modal.classList.add('active');
+            document.querySelectorAll('.tag').forEach(t=>t.addEventListener('click',(e)=>{ e.stopPropagation(); modal.classList.remove('active'); appState.activeTag=t.dataset.tag; renderChartBeatPage(); }));
+        }
+        
+        function renderStatsPage() {
+            appState.currentView = 'stats';
+            const stats = appState.statsData;
+            const categories = stats.categories || [];
+            const currentCategory = stats.currentCategory;
+            const items = stats.itemsMap?.get(currentCategory) || [];
+            appContainer.innerHTML = `<div class="max-w-5xl mx-auto"><button id="backBtn" class="back-button mb-4 md:mb-6 flex items-center text-accent hover:text-accent-dark font-semibold transition-colors text-sm md:text-base"><i class="fas fa-arrow-left mr-2"></i> Back to Home</button><div class="text-center mb-6 md:mb-8"><h2 class="text-2xl md:text-3xl font-bold mb-2 text-white">Statistics</h2><p class="text-gray-400 text-sm md:text-base">Historical charts and music statistics</p></div><div class="stats-selector"><label class="block text-gray-300 text-sm font-medium mb-2">Select Statistic:</label><select id="statsCategorySelect" class="w-full max-w-md bg-gray-800 text-white border border-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:border-accent">${categories.map(cat => `<option value="${cat.replace(/"/g, '&quot;')}" ${currentCategory === cat ? 'selected' : ''}>${cat}</option>`).join('')}</select></div><div class="bg-black/40 rounded-xl border border-gray-800 overflow-hidden"><div class="overflow-x-auto"><table class="stats-table"><thead><tr><th class="rank-col">#</th><th>Item</th><th class="number-col">Number</th></tr></thead><tbody>${items.length ? items.map(item => `<tr><td class="rank-col font-bold">${item.rank}</td><td class="font-medium">${escapeHtml(item.item)}</td><td class="number-col font-mono">${formatNumber(item.number)}</td></tr>`).join('') : `<tr><td colspan="3" class="text-center py-8 text-gray-400">No data available for this category</td></tr>`}</tbody></table></div></div></div>`;
+            document.getElementById('backBtn')?.addEventListener('click', () => navigateBack());
+            const selectEl = document.getElementById('statsCategorySelect');
+            if (selectEl) { selectEl.addEventListener('change', (e) => { appState.statsData.currentCategory = e.target.value; renderStatsPage(); }); }
+            setupBackToTop();
+        }
+        
+        function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, function(m) { if (m === '&') return '&amp;'; if (m === '<') return '&lt;'; if (m === '>') return '&gt;'; return m; }); }
+        function formatNumber(num) { if (!num) return '0'; const n = parseInt(num.toString().replace(/,/g, '')); if (isNaN(n)) return num; if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M'; if (n >= 1000) return (n / 1000).toFixed(1) + 'K'; return n.toString(); }
+        
+        function showStats() { if (!chartsConfig.statsData.loaded) { appContainer.innerHTML = `<div class="flex flex-col items-center justify-center p-8"><div class="loader mb-4"></div><p class="text-gray-400">Loading statistics data...</p></div>`; fetchChartData('statsData').then(() => { renderStatsPage(); }); return; } renderStatsPage(); }
+        
+        function showChart(ct, dateToSet=null){
+            appState.lastChart = appState.activeChart; appState.lastChartDate = appState.currentDate; appState.lastChartYear = appState.currentYear;
+            appState.activeChart = ct; const isYear = ct.includes('yearEnd'), isGoat = ct.includes('goat');
+            if(isYear){ let years = Object.keys(appState.chartData[ct]||{}).sort((a,b)=>b-a); appState.currentYear = years[0]||new Date().getFullYear().toString(); }
+            else { let dates = Object.keys(appState.chartData[ct]||{}); let recent = dates.length?dates[dates.length-1]:null; if(dateToSet && appState.chartData[ct]?.[dateToSet]) appState.currentDate = dateToSet; else if(appState.sharedDate && appState.chartData[ct]?.[appState.sharedDate]) appState.currentDate = appState.sharedDate; else appState.currentDate = recent; appState.sharedDate = appState.currentDate; }
+            const nav = isYear?Object.entries(chartsConfig).filter(([k])=>k.includes('yearEnd')):isGoat?Object.entries(chartsConfig).filter(([k])=>k.includes('goat')):Object.entries(chartsConfig).filter(([k])=>!k.includes('yearEnd')&&!k.includes('goat')&&k!=='artistStats'&&k!=='statsData');
+            appContainer.innerHTML = `<div class="max-w-4xl mx-auto"><button id="backBtn" class="back-button mb-4 md:mb-6 flex items-center text-accent hover:text-accent-dark font-semibold transition-colors text-sm md:text-base"><i class="fas fa-arrow-left mr-2"></i> Back to ${appState.lastChart ? chartsConfig[appState.lastChart]?.title || 'Chart' : 'Home'}</button><div class="mb-4 md:mb-6"><h2 class="text-xl md:text-3xl font-bold text-center mb-2 text-white">${isYear?'Year-End Charts':isGoat?'Greatest of All Time':'Weekly Charts'}</h2><div class="nav-charts-wrapper">${nav.map(([k,c])=>`<button data-chart="${k}" class="chart-nav-btn btn-hover ${appState.activeChart===k?(isGoat?'goat-active':'active'):''} text-xs md:text-sm font-semibold py-2 px-3 rounded-md transition-all">${c.title}</button>`).join('')}</div></div><div class="mb-4 md:mb-6"><h3 class="text-lg md:text-xl font-bold text-center mb-3 md:mb-4 text-white">${chartsConfig[appState.activeChart]?.title||''}</h3>${isYear?`<div class="flex justify-center mb-4"><div class="year-selector">${Object.keys(appState.chartData[ct]||{}).sort((a,b)=>b-a).map(y=>`<button class="year-btn ${y===appState.currentYear?'active':''}" data-year="${y}">${y}</button>`).join('')}</div></div>`:isGoat?'':`<div class="flex flex-col sm:flex-row justify-center items-center gap-2 sm:gap-4"><div class="flex items-center gap-2 text-white"><label class="text-xs md:text-sm text-gray-400 font-medium">Week:</label><button id="prevBtn" class="p-1 md:p-2 rounded-md bg-gray-800 hover:bg-gray-700 disabled:opacity-50 btn-hover"><i class="fas fa-chevron-left text-xs md:text-sm"></i></button><input type="text" id="weekPicker" class="flatpickr-input text-xs md:text-sm" placeholder="Select date"><button id="nextBtn" class="p-1 md:p-2 rounded-md bg-gray-800 hover:bg-gray-700 disabled:opacity-50 btn-hover"><i class="fas fa-chevron-right text-xs md:text-sm"></i></button></div></div>`}<div class="chart-container" id="chartContainer">${renderChartItems()}</div>${!isYear&&!isGoat?`<div class="bottom-nav flex justify-center items-center gap-2 md:gap-3 mt-4 md:mt-6"><button id="bottomPrev" class="p-1 md:p-2 rounded-md bg-gray-800 hover:bg-gray-700 disabled:opacity-50 btn-hover text-xs md:text-sm"><i class="fas fa-chevron-left text-xs mr-1"></i> Previous</button><button id="bottomNext" class="p-1 md:p-2 rounded-md bg-gray-800 hover:bg-gray-700 disabled:opacity-50 btn-hover text-xs md:text-sm">Next <i class="fas fa-chevron-right text-xs ml-1"></i></button></div>`:''}${!isYear&&!isGoat?`<div class="text-center mt-4 md:mt-6"><button id="topBtn" class="px-3 md:px-4 py-1 md:py-2 bg-accent text-black rounded-md hover:bg-accent-dark btn-hover text-xs md:text-sm"><i class="fas fa-arrow-up mr-1 md:mr-2"></i> Back to Top</button></div>`:''}</div>`;
+            setupChartListeners(); setTimeout(()=>loadImages(),50); setupBackToTop();
+            if(!isYear && !isGoat){ let dates = Object.keys(appState.chartData[ct]||{}); if(dates.length){ flatpickr("#weekPicker", { enable: dates, defaultDate: appState.currentDate, dateFormat: "Y-m-d", onChange: (_,ds)=>{ if(ds){ appState.currentDate=ds; appState.sharedDate=ds; document.getElementById('chartContainer').innerHTML=renderChartItems(); updateNavButtons(); setTimeout(()=>loadImages(),50); } } }); } }
+            if(isYear) document.querySelectorAll('.year-btn').forEach(b=>b.addEventListener('click',function(){ appState.currentYear=this.dataset.year; document.querySelectorAll('.year-btn').forEach(x=>x.classList.remove('active')); this.classList.add('active'); document.getElementById('chartContainer').innerHTML=renderChartItems(); setTimeout(()=>loadImages(),50); }));
+            ['prevBtn','nextBtn','bottomPrev','bottomNext'].forEach(id=>document.getElementById(id)?.addEventListener('click',()=>navigateWeek(id.includes('prev')?-1:1)));
+        }
+        
+        function navigateWeek(delta){ let dates = Object.keys(appState.chartData[appState.activeChart]||{}).sort(); let idx = dates.indexOf(appState.currentDate); let nidx = idx+delta; if(nidx>=0 && nidx<dates.length){ appState.currentDate = dates[nidx]; appState.sharedDate = appState.currentDate; document.getElementById('chartContainer').innerHTML = renderChartItems(); updateNavButtons(); setTimeout(()=>loadImages(),50); if(window.flatpickr) document.getElementById('weekPicker')?._flatpickr?.setDate(appState.currentDate); } }
+        function updateNavButtons(){ let dates = Object.keys(appState.chartData[appState.activeChart]||{}).sort(); let idx = dates.indexOf(appState.currentDate); ['prevBtn','bottomPrev'].forEach(id=>{ let b=document.getElementById(id); if(b) b.disabled = idx<=0; }); ['nextBtn','bottomNext'].forEach(id=>{ let b=document.getElementById(id); if(b) b.disabled = idx>=dates.length-1; }); }
+        
+        function renderChartItems(){
+            let ct=appState.activeChart, cm=appState.colMaps[ct]||{}, items=[], isYear=ct.includes('yearEnd'), isGoat=ct.includes('goat');
+            if(isYear){ let yd=appState.chartData[ct]?.[appState.currentYear]; if(!yd) return '<div class="text-center p-8 text-gray-400">No data</div>'; items=yd; }
+            else if(isGoat){ items=appState.chartData[ct]||[]; if(!items.length) return '<div class="text-center p-8 text-gray-400">No data</div>'; }
+            else{ if(!appState.currentDate||!appState.chartData[ct]?.[appState.currentDate]) return '<div class="text-center p-8 text-gray-400">No data</div>'; items=appState.chartData[ct][appState.currentDate]; }
+            let sorted = [...items].sort((a,b)=>(parseInt(a[cm.position])||999)-(parseInt(b[cm.position])||999)).slice(0,100);
+            if(!sorted.length) return '<div class="text-center p-8 text-gray-400">No data</div>';
+            return sorted.map((row,idx)=>{
+                let pos=parseInt(row[cm.position])||0, artist=row[cm.artist]||'Unknown', diff=cm.diff!==-1?row[cm.diff]:null;
+                let lw=cm.lastWeek!==-1&&!isYear&&!isGoat?row[cm.lastWeek]:null, pk=cm.peak!==-1?parseInt(row[cm.peak]):null, wks=cm.weeks!==-1?parseInt(row[cm.weeks]):null;
+                let w1=cm.weeksAt1!==-1?parseInt(row[cm.weeksAt1]):null, units=cm.units!==-1?row[cm.units]:null, total=cm.totalUnits!==-1?row[cm.totalUnits]:null;
+                let name = (ct.includes('Songs')||ct==='songs'||ct==='radioSongs'||ct==='streamingSongs'||ct==='digitalSongsSales')?(row[cm.song]||'Unknown'):(ct.includes('Albums')||ct==='albums'||ct==='topStreamingAlbums'||ct==='topAlbumSales')?(row[cm.album]||'Unknown'):(row[cm.artist]||'Unknown');
+                let diffClass='', diffSym='';
+                if(diff){ let l=diff.toString().toLowerCase(); if(l.includes('▲')||l.includes('+')){ diffClass='diff-up'; diffSym=diff; } else if(l.includes('▼')||l.includes('-')){ diffClass='diff-down'; diffSym=diff; } else if(l.includes('new')){ diffClass='diff-new'; diffSym='NEW'; } else if(l.includes('re')){ diffClass='diff-new'; diffSym='RE'; } else if(l==='=' || l==='0') diffSym='='; else if(l && !isNaN(parseInt(l))) { let num = parseInt(l); if(num > 0) { diffClass='diff-up'; diffSym=`▲${num}`; } else if(num < 0) { diffClass='diff-down'; diffSym=`▼${Math.abs(num)}`; } } }
+                let newPeak='', w1badge='';
+                if(!isYear&&!isGoat&&pk&&pos<pk){ let isNew=(diff?.toLowerCase()==='new'||diff?.toLowerCase()==='re'||lw?.toString()==='0'); if(!isNew) newPeak='<span class="badge badge-new-peak">NEW PEAK</span>'; }
+                if(w1&&w1>0) w1badge=`<span class="badge badge-weeks-at-1">${w1} WK${w1>1?'S':''} AT #1</span>`;
+                let unitsDisplay=''; let unitsLabel=''; let isRadio=false, isStreaming=false, isDigital=false;
+                if(units && units!=='0'){ if(ct==='radioSongs'){ unitsDisplay=`<span class="text-xs text-muted-item">Audience: <span class="font-semibold">${units}</span></span>`; unitsLabel=`Audience: ${units}`; isRadio=true; } else if(ct==='streamingSongs'){ unitsDisplay=`<span class="text-xs text-muted-item">Streams: <span class="font-semibold">${units}</span></span>`; unitsLabel=`Streams: ${units}`; isStreaming=true; } else if(ct==='digitalSongsSales'){ unitsDisplay=`<span class="text-xs text-muted-item">Sales: <span class="font-semibold">${units}</span></span>`; unitsLabel=`Sales: ${units}`; isDigital=true; } else if(ct==='topStreamingAlbums'){ unitsDisplay=`<span class="text-xs text-muted-item">Streams: <span class="font-semibold">${units}</span></span>`; unitsLabel=`Streams: ${units}`; } else if(ct==='topAlbumSales'){ unitsDisplay=`<span class="text-xs text-muted-item">Sales: <span class="font-semibold">${units}</span></span>`; unitsLabel=`Sales: ${units}`; } else{ unitsDisplay=`<span class="text-xs text-muted-item">Units: <span class="font-semibold">${units}</span></span>`; unitsLabel=`Units: ${units}`; } }
+                let totalDisplay = total ? `<span class="text-xs text-muted-item">Total: <span class="font-semibold">${total}</span></span>` : '';
+                let artistDisplay = (ct==='artists'||ct==='yearEndArtists'||ct==='goatArtists')?`<p class="text-gray-600 text-sm mb-2"><button class="text-accent hover:text-accent-dark text-xs font-semibold artist-page-link" data-artist="${artist}">View Artist Page <i class="fas fa-arrow-right text-xs ml-1"></i></button></p>`:`<p class="text-gray-600 text-sm mb-2"><span class="artist-link font-medium" data-artist="${artist}">${artist}</span></p>`;
+                let runKey = `${name.toLowerCase()}:${artist.toLowerCase()}`;
+                let run = appState.chartRunData[ct]?.[runKey]||[];
+                const copyBtn = `<button class="copy-data-btn" data-copy='{"name":"${name.replace(/"/g, '&quot;')}","artist":"${artist.replace(/"/g, '&quot;')}","pos":${pos},"diffSymbol":"${diffSym||''}","lw":"${lw||''}","pk":${pk||0},"wks":${wks||0},"w1":${w1||0},"units":"${units||''}","total":"${total||''}","ct":"${ct}","title":"${chartsConfig[ct]?.title}","chartType":"${ct}","date":"${appState.currentDate}","isAlbum":${ct.includes('Albums')||ct==='albums'||ct==='topStreamingAlbums'||ct==='topAlbumSales'},"unitsLabel":"${unitsLabel}","isRadio":${isRadio},"isStreaming":${isStreaming},"isDigital":${isDigital}}'><i class="fas fa-copy"></i> Copy</button>`;
+                return `<div class="chart-card-item ${pos===1?(isGoat?'rank-1 goat':'rank-1'):''}" data-chart="${ct}" data-date="${appState.currentDate}"><div class="flex items-start"><div class="rank-number">${pos}${diffSym?`<span class="diff-indicator ${diffClass}">${diffSym}</span>`:''}</div><div class="mx-3 md:mx-4"><div class="spotify-image" id="img-${ct}-${idx}"><div class="w-full h-full placeholder-art"><i class="fas ${chartsConfig[ct]?.icon||'fa-music'} text-gray-600"></i></div></div></div><div class="flex-grow"><div class="flex justify-between"><div class="flex-grow pr-2"><div class="flex flex-wrap gap-1 mb-1"><p class="font-bold text-base md:text-lg"><span class="artist-link cursor-pointer" data-artist="${artist}" data-item="${name}" data-type="${ct.includes('Albums')||ct.includes('topStreaming')||ct.includes('topAlbumSales')?'album':'song'}">${name}</span> ${copyBtn}</p></div>${artistDisplay}<div class="flex flex-wrap gap-2 mb-2">${w1badge}${newPeak}</div><div class="flex flex-col gap-1">${unitsDisplay}${totalDisplay}</div></div>${!isYear&&!isGoat?`<div class="chart-stats-vertical">${lw!==undefined?`<span>LW<span class="stat-value">${lw==='0'||lw?.toLowerCase()==='re'?'-':lw}</span></span>`:''}${pk?`<span>PK<span class="stat-value">${pk}</span></span>`:''}${wks?`<span>WOC<span class="stat-value">${wks}</span></span>`:''}</div>`:isGoat||isYear?`<div class="chart-stats-vertical">${pk?`<span>PK<span class="stat-value">${pk}</span></span>`:''}${wks?`<span>WKS<span class="stat-value">${wks}</span></span>`:''}</div>`:''}</div>${run.length?`<div class="mt-3 text-xs"><button class="text-accent chart-run-link" data-chart="${ct}" data-key="${runKey}">View Chart Run <i class="fas fa-arrow-right text-xs ml-1"></i></button></div>`:''}</div></div></div>`;
+            }).join('');
+        }
+        
+        function setupChartListeners(){
+            document.getElementById('backBtn')?.addEventListener('click',()=>{ if(appState.lastChart && appState.lastChart !== appState.activeChart) showChart(appState.lastChart, appState.lastChartDate); else navigateBack(); });
+            document.querySelectorAll('.chart-nav-btn').forEach(b=>b.addEventListener('click',()=>showChart(b.dataset.chart)));
+            document.querySelectorAll('.copy-data-btn').forEach(btn=>btn.addEventListener('click',(e)=>{ e.stopPropagation(); const data = JSON.parse(btn.dataset.copy); copyItemData(data); }));
+            setTimeout(()=>{ document.querySelectorAll('.artist-link, .artist-page-link').forEach(l=>l.addEventListener('click',(e)=>{ e.stopPropagation(); renderArtistPage(l.dataset.artist); })); document.querySelectorAll('.chart-run-link').forEach(b=>{ let ct=b.dataset.chart, key=b.dataset.key; b.addEventListener('click',()=>showRunModal(ct,key)); }); document.querySelectorAll('.chart-card-item').forEach(c=>c.addEventListener('click',function(e){ if(!e.target.closest('.artist-link')&&!e.target.closest('.chart-run-link')&&!e.target.closest('.copy-data-btn')) showChart(this.dataset.chart, this.dataset.date); })); },100);
+        }
+        
+        function showRunModal(ct,key){ let run = appState.chartRunData[ct]?.[key]||[]; let [name,artist] = key.split(':'); if(!run.length) modalContent.innerHTML='<p class="text-center text-gray-400">No chart run data.</p>'; else{ const bestPeak = Math.min(...run.map(r => r.peak)); const totalWeeks = run.length; modalContent.innerHTML = `<h3 class="text-xl md:text-2xl font-bold mb-2 text-black">${decodeURIComponent(name)}</h3><p class="text-gray-600 mb-4">by <span class="font-semibold">${artist}</span></p><div class="bg-gray-100 p-3 rounded-lg mb-4 flex justify-between text-sm"><span>🏆 Best Peak: <strong>#${bestPeak}</strong></span><span>📅 Total Weeks: <strong>${totalWeeks}</strong></span></div><div class="chart-run-list">${run.map((r,i,a)=>{ let cls = 'run-steady'; let changeIcon = ''; if(i>0){ if(r.position < a[i-1].position){ cls = 'run-up'; changeIcon = '<span class="text-green-600 ml-1">▲</span>'; } else if(r.position > a[i-1].position){ cls = 'run-down'; changeIcon = '<span class="text-red-600 ml-1">▼</span>'; } } if(r.position === r.peak && i>0 && r.position < a[i-1].peak) cls = 'run-peak'; if(r.position === 1) cls = 'run-number-one'; if(i===0) cls = 'run-new'; let isPeak = (r.position === r.peak && (i===0 || r.position < a[i-1].peak)); return `<div class="chart-run-list-item ${cls}"><div class="flex items-center gap-3 flex-wrap"><button class="chart-run-date-btn" onclick="goToWeek('${ct}','${r.date}')"><i class="far fa-calendar-alt mr-1"></i>${r.date}</button><span class="chart-run-position font-mono">#${r.position}${changeIcon}</span><div class="chart-run-stats"><span>📈 Peak: <span class="font-semibold">#${r.peak}</span></span><span>⏱️ Weeks: <span class="font-semibold">${r.weeks}</span></span></div></div><div class="flex gap-2">${isPeak ? '<span class="chart-run-peak-badge">NEW PEAK</span>' : ''}${i===0 ? '<span class="chart-run-new-badge">DEBUT</span>' : ''}</div></div>`; }).join('')}</div><div class="text-center text-xs text-gray-400 mt-4">Click on any date to view that week's chart</div>`; } modal.classList.add('active'); }
+        
+        function goToWeek(ct,date){ appState.currentDate=date; showChart(ct,date); modal.classList.remove('active'); }
+        
+        async function loadImages(){ let ct=appState.activeChart, cm=appState.colMaps[ct]||{}, items=[]; if(ct.includes('yearEnd')) items=appState.chartData[ct]?.[appState.currentYear]||[]; else if(ct.includes('goat')) items=appState.chartData[ct]||[]; else items=appState.chartData[ct]?.[appState.currentDate]||[]; for(let i=0;i<items.length;i++){ let row=items[i], artist=row[cm.artist]||'Unknown', q='', t='', extra = {}; if(ct.includes('Songs')||ct==='songs'||ct==='radioSongs'||ct==='streamingSongs'||ct==='digitalSongsSales'){ q=artist; t='artist'; } else if(ct.includes('Albums')||ct==='albums'||ct==='topStreamingAlbums'||ct==='topAlbumSales'){ let alb=row[cm.album]||''; q = `${artist} ${alb}`; t = 'album'; extra = { album: alb, artist: artist }; } else{ q=artist; t='artist'; } if(q && q!=='Unknown'){ let searchQuery = t === 'artist' ? getArtistSearchName(q) : q; let url = await getSpotifyImage(searchQuery, t, extra); let el = document.getElementById(`img-${ct}-${i}`); if(el && url){ el.innerHTML=`<img src="${url}" class="w-full h-full object-cover">`; el.classList.remove('placeholder-art'); } } } }
+        
+        function renderArtistPage(artist){ let data = appState.artistDetailsData[artist]; if(!data){ appContainer.innerHTML = `<div class="max-w-4xl mx-auto text-center p-6"><button id="backBtn" class="back-button mb-4 text-accent"><i class="fas fa-arrow-left mr-2"></i> Back</button><i class="fas fa-user-circle text-5xl text-gray-600 mb-4"></i><h2 class="text-2xl font-bold text-white">Artist not found</h2></div>`; document.getElementById('backBtn')?.addEventListener('click',()=>{ if(appState.lastChart) showChart(appState.lastChart, appState.lastChartDate); else navigateBack(); }); return; } const artistSearchName = getArtistSearchName(artist); getSpotifyImage(artistSearchName, 'artist').then(img=>{ let sections = ['Top 50 Artists','Hot 100 Songs','Radio Songs','Top 100 Albums','Top Streaming Albums','Top Album Sales','Streaming Songs','Digital Songs Sales'].map(name=>{ let cd = data[name]; if(!cd||cd.count===0) return ''; let isArtist = name==='Top 50 Artists'; return `<div class="artist-list-card mb-6"><div class="artist-list-header"><h3 class="font-bold text-gray-800">${name}</h3><p class="text-xs text-gray-500">${isArtist?`Peak #${cd.entries[0]?.peak||0} / ${cd.entries[0]?.weeks||0} Weeks`:`${cd.count} Entries / ${cd.numberOnes} #1's / ${cd.topTens} Top 10's`}</p></div>${!isArtist?`<div class="divide-y">${cd.entries.slice(0,20).map(e=>`<div class="artist-list-item"><div><span class="font-medium text-gray-800">${e.item}</span>${e.unitsSold?`<span class="text-xs text-gray-500 ml-2">${e.unitsSold}</span>`:''}${e.totalUnits?`<span class="units-badge text-xs">${e.totalUnits} total</span>`:''}</div><div class="flex gap-3"><span class="text-xs text-gray-500">Peak #${e.peak}</span><span class="text-xs text-gray-500">${e.weeks} wks</span></div></div>`).join('')}${cd.entries.length>20?`<div class="text-center py-2 text-xs text-gray-400">... and ${cd.entries.length-20} more</div>`:''}</div>`:''}</div>`; }).join(''); appContainer.innerHTML = `<div class="max-w-4xl mx-auto"><button id="backBtn" class="back-button mb-4 text-accent"><i class="fas fa-arrow-left mr-2"></i> Back</button>${img?`<img src="${img}" class="artist-header-image">`:`<div class="artist-header-image placeholder-art flex items-center justify-center"><i class="fas fa-user text-4xl text-gray-500"></i></div>`}<h1 class="artist-name-large">${artist}</h1><p class="text-gray-400 text-sm mb-6">Detailed Chart History</p><div>${sections}</div></div>`; document.getElementById('backBtn')?.addEventListener('click',()=>{ if(appState.lastChart) showChart(appState.lastChart, appState.lastChartDate); else navigateBack(); }); setupBackToTop(); }); }
+        
+        function showAllArtists(){ appState.currentView='allArtists'; let artists = appState.allArtistsList; if (!artists.length) { appContainer.innerHTML = `<div class="max-w-6xl mx-auto"><button id="backBtn" class="back-button mb-4 text-accent"><i class="fas fa-arrow-left mr-2"></i> Back to Home</button><div class="text-center py-8"><div class="loader mx-auto mb-4"></div><p class="text-gray-400">Loading artists data...</p></div></div>`; document.getElementById('backBtn')?.addEventListener('click',navigateBack); return; } appContainer.innerHTML = `<div class="max-w-6xl mx-auto"><button id="backBtn" class="back-button mb-4 text-accent"><i class="fas fa-arrow-left mr-2"></i> Back to Home</button><h2 class="text-2xl font-bold mb-4 section-title">All Artists Entries</h2><div class="search-container mb-4"><i class="fas fa-search search-icon"></i><input type="text" id="artistSearch" class="search-input text-sm" placeholder="Search artists..."></div><div id="artistsGrid" class="artists-icons-grid">${artists.map(a=>`<div class="artist-icon-card" data-artist="${a}"><div class="artist-icon-placeholder" id="icon-${a.replace(/[^a-z0-9]/gi,'_')}"><i class="fas fa-user"></i></div><div class="artist-icon-name">${a}</div></div>`).join('')}</div></div>`; document.getElementById('backBtn')?.addEventListener('click',navigateBack); document.getElementById('artistSearch').addEventListener('input',function(){ let term=this.value.toLowerCase(); let filtered=artists.filter(a=>a.toLowerCase().includes(term)); document.getElementById('artistsGrid').innerHTML=filtered.map(a=>`<div class="artist-icon-card" data-artist="${a}"><div class="artist-icon-placeholder" id="icon-${a.replace(/[^a-z0-9]/gi,'_')}"><i class="fas fa-user"></i></div><div class="artist-icon-name">${a}</div></div>`).join(''); attachArtistClicks(); loadArtistIcons(filtered); }); attachArtistClicks(); loadArtistIcons(artists); setupBackToTop(); }
+        
         function attachArtistClicks(){ document.querySelectorAll('.artist-icon-card').forEach(c=>c.addEventListener('click',()=>renderArtistPage(c.dataset.artist))); }
-        function navigateBack(){ let prev = appState.navigationHistory.pop(); if(prev?.view==='chart') showChart(prev.chart); else if(prev?.view==='artist') renderArtistPage(prev.artist); else if(prev?.view==='allArtists') showAllArtists(); else if(prev?.view==='chartBeat') renderChartBeatPage(); else renderHome(); }
+        
+        async function loadArtistIcons(artists){ for(let a of artists){ const artistSearchName = getArtistSearchName(a); let url = await getSpotifyImage(artistSearchName, 'artist'); let el = document.getElementById(`icon-${a.replace(/[^a-z0-9]/gi,'_')}`); if(el && url){ el.innerHTML=`<img src="${url}" class="artist-icon-image">`; el.classList.remove('artist-icon-placeholder'); } } }
+        
+        function navigateBack(){ let prev = appState.navigationHistory.pop(); if(prev?.view==='chart') showChart(prev.chart); else if(prev?.view==='artist') renderArtistPage(prev.artist); else if(prev?.view==='allArtists') showAllArtists(); else if(prev?.view==='chartBeat') renderChartBeatPage(); else if(prev?.view==='stats') showStats(); else renderHome(); }
+        
         function setupBackToTop(){ let existing = document.querySelector('.back-to-top'); if(existing) existing.remove(); let btn = document.createElement('button'); btn.className='back-to-top'; btn.innerHTML='<i class="fas fa-arrow-up"></i>'; document.body.appendChild(btn); window.addEventListener('scroll',()=>{ if(window.scrollY>300){ btn.style.display='flex'; setTimeout(()=>btn.classList.add('visible'),10); } else{ btn.classList.remove('visible'); setTimeout(()=>{if(!btn.classList.contains('visible')) btn.style.display='none';},300); } }); btn.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'})); }
-        async function fetchChartBeat() { for(let [key, cfg] of Object.entries(chartBeatConfig)) { try { const res = await fetch(cfg.url); let csv = await res.text(); if(csv.charCodeAt(0)===0xFEFF) csv=csv.substring(1); const rows = csv.trim().split('\n').map(r=>parseCsvRow(r)); const header = rows[0].map(h=>h.toLowerCase().trim()); const find = (ks)=>{ for(let k of ks){ let i=header.indexOf(k); if(i!==-1) return i; } return -1; }; const di = find(['date','data']), ti = find(['title','título']), xi = find(['text','conteúdo']), ai = find(['artist','artista']), li = find(['chartlink']); const processed = rows.slice(1).map(r=>({ title: r[ti]||'NO TITLE', publicationDate: r[di]||'NO DATE', artist: r[ai]||null, fullText: r[xi]||'No content available.', chartLink: r[li]||null, imageUrl: null })).reverse(); appState.chartBeatData[key] = processed; setTimeout(async () => { for(let i=0;i<processed.length;i++) { if(processed[i].artist) { const url = await getSpotifyImage(processed[i].artist, 'artist'); if(url) processed[i].imageUrl = url; } } }, 100); } catch(e) { appState.chartBeatData[key]=[]; } } }
-        function renderChartBeatPage(){ let arts = appState.chartBeatData[appState.currentBlog]||[]; appContainer.innerHTML = `<div class="max-w-6xl mx-auto"><button id="backBtn" class="back-button mb-4 text-accent"><i class="fas fa-arrow-left mr-2"></i> Back</button><div class="text-center mb-6"><h2 class="text-2xl font-bold">Chart Beat</h2></div><div class="flex justify-center gap-4 border-b pb-2"><button class="chart-beat-nav-btn ${appState.currentBlog==='hot100'?'active':''}" data-blog="hot100">Hot 100</button><button class="chart-beat-nav-btn ${appState.currentBlog==='artists'?'active':''}" data-blog="artists">Artists</button><button class="chart-beat-nav-btn ${appState.currentBlog==='top100Albums'?'active':''}" data-blog="top100Albums">Albums</button></div><div class="mt-6 space-y-4">${arts.map(a=>`<div class="blog-card p-4"><img src="${a.imageUrl||'https://via.placeholder.com/400x200'}" class="rounded"><h4 class="font-bold mt-2">${a.title}</h4><p class="text-sm text-gray-400">${a.publicationDate}</p><button class="read-more-btn mt-2 text-accent" data-blog="${appState.currentBlog}" data-idx="${arts.indexOf(a)}">Read More</button></div>`).join('')}</div></div>`; document.getElementById('backBtn')?.addEventListener('click',navigateBack); document.querySelectorAll('.chart-beat-nav-btn').forEach(b=>b.addEventListener('click',()=>{ appState.currentBlog=b.dataset.blog; renderChartBeatPage(); })); document.querySelectorAll('.read-more-btn').forEach(b=>b.addEventListener('click',()=>{ let art = appState.chartBeatData[b.dataset.blog][parseInt(b.dataset.idx)]; modalContent.innerHTML = `<div><h3 class="text-xl font-bold">${art.title}</h3><p class="text-gray-500 text-sm">${art.publicationDate}</p><p class="mt-2">${art.fullText}</p>${art.chartLink?`<button class="mt-4 bg-accent text-black px-4 py-2 rounded" onclick="showChart('${art.chartLink}')">View Chart</button>`:''}</div>`; modal.classList.add('active'); })); setupBackToTop(); }
-        async function init(){ showMessage('loading','Loading charts...'); try{ const priorityCharts = [...weeklyChartList]; await Promise.all(priorityCharts.map(ct => fetchChartData(ct))); for(let ct of weeklyChartList) { let dates = Object.keys(appState.chartData[ct]||{}); if(dates.length) { appState.sharedDate = dates[dates.length-1]; break; } } renderHome(); const backgroundCharts = [...yearEndList, ...goatList, 'artistStats']; backgroundCharts.forEach(ct => { fetchChartData(ct).then(() => { if (ct.includes('yearEnd') || ct.includes('goat')) { document.querySelectorAll('.chart-card').forEach(el=>el.remove()); renderHome(); } if (ct === 'artistStats' && appState.currentView === 'allArtists') showAllArtists(); }); }); setTimeout(() => fetchChartBeat(), 500); } catch(e){ showMessage('error','Error loading data'); } }
-        function showMessage(type, text) { appContainer.innerHTML = type==='loading'?`<div class="flex flex-col items-center p-8"><div class="loader"></div><p>${text}</p></div>`:`<div class="text-center p-8 text-red-500">${text}<button id="retryBtn" class="mt-4 bg-accent px-4 py-2 rounded">Retry</button></div>`; document.getElementById('retryBtn')?.addEventListener('click', init); }
-        document.addEventListener('DOMContentLoaded',()=>{ init(); document.getElementById('mainTitle').addEventListener('click',()=>{ appState.navigationHistory=[]; renderHome(); }); document.getElementById('navAllArtists').addEventListener('click',()=>showAllArtists()); document.getElementById('navChartBeat').addEventListener('click',()=>{ appState.currentBlog='hot100'; renderChartBeatPage(); }); closeModal.addEventListener('click',()=>modal.classList.remove('active')); modal.addEventListener('click',e=>{ if(e.target===modal) modal.classList.remove('active'); }); window.goToWeek = function(ct,date){ appState.currentDate=date; showChart(ct,date); modal.classList.remove('active'); }; window.showChart = showChart; });
+        
+        async function init(){ showMessage('loading','Loading charts...'); try{ const priorityCharts = [...weeklyChartList]; await Promise.all(priorityCharts.map(ct => fetchChartData(ct))); for(let ct of weeklyChartList) { let dates = Object.keys(appState.chartData[ct]||{}); if(dates.length) { appState.sharedDate = dates[dates.length-1]; break; } } renderHome(); const backgroundCharts = [...yearEndList, ...goatList, 'artistStats', 'statsData']; backgroundCharts.forEach(ct => { fetchChartData(ct).then(() => { if (ct.includes('yearEnd') || ct.includes('goat')) updateHomeCharts(); if (ct === 'artistStats' && appState.currentView === 'allArtists') showAllArtists(); }); }); setTimeout(() => fetchChartBeat(), 500); } catch(e){ console.error(e); showMessage('error','Error loading data: '+e.message); } }
+        
+        document.addEventListener('DOMContentLoaded',()=>{ init(); document.getElementById('mainTitle').addEventListener('click',()=>{ appState.navigationHistory=[]; renderHome(); }); document.getElementById('navAllArtists').addEventListener('click',()=>showAllArtists()); document.getElementById('navChartBeat').addEventListener('click',()=>showChartBeat('hot100')); document.getElementById('navStats').addEventListener('click',()=>showStats()); closeModal.addEventListener('click',()=>modal.classList.remove('active')); modal.addEventListener('click',e=>{ if(e.target===modal) modal.classList.remove('active'); }); });
     </script>
 </body>
 </html>
