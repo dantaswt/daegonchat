@@ -1,179 +1,39 @@
-const seedClients=[
-  {name:"Studio Aurora",status:"active",owner:"Adilson",last:"hoje, 09:42",value:1250},
-  {name:"Clínica Horizonte",status:"proposal",owner:"Adilson",last:"hoje, 08:18",value:1800},
-  {name:"Colégio Norte",status:"active",owner:"Adilson",last:"ontem",value:2400},
-  {name:"Lume Arquitetura",status:"lead",owner:"Adilson",last:"02 out",value:3200},
-  {name:"Bossa Café",status:"proposal",owner:"Adilson",last:"01 out",value:980},
-  {name:"Norte Saúde",status:"active",owner:"Adilson",last:"29 set",value:1650}
+const views={inbox:"Inbox",contacts:"Contatos",pipeline:"Pipeline",automations:"Automações",bots:"Bots",analytics:"Analytics"};
+const seedContacts=[
+{id:1,name:"Mariana Costa",phone:"+55 79 99111-2200",status:"lead",source:"WhatsApp",owner:"Adilson",last:"agora",tags:["Matrícula"],unread:true,bot:true},
+{id:2,name:"Rafael Lima",phone:"+55 79 99881-4432",status:"customer",source:"WhatsApp",owner:"Adilson",last:"5 min",tags:["Suporte"],unread:false,bot:false},
+{id:3,name:"Ana Beatriz",phone:"+55 79 98812-7311",status:"lead",source:"Site",owner:"Adilson",last:"18 min",tags:["Comercial"],unread:true,bot:true},
+{id:4,name:"Lucas Rocha",phone:"+55 79 99920-1147",status:"customer",source:"WhatsApp",owner:"Adilson",last:"1h",tags:["Financeiro"],unread:false,bot:false},
+{id:5,name:"Fernanda Melo",phone:"+55 79 98741-5580",status:"inactive",source:"Instagram",owner:"Adilson",last:"ontem",tags:["Follow-up"],unread:false,bot:true}
 ];
-
-const seedTasks=[
-  {id:1,title:"Enviar proposta revisada",meta:"Clínica Horizonte",due:"hoje",time:"11:30",done:false},
-  {id:2,title:"Conferir notas fiscais",meta:"Financeiro · setembro",due:"hoje",time:"14:00",done:false},
-  {id:3,title:"Follow-up de onboarding",meta:"Studio Aurora",due:"hoje",time:"16:30",done:false},
-  {id:4,title:"Atualizar relatório semanal",meta:"Operações",due:"amanhã",time:"09:00",done:false},
-  {id:5,title:"Revisar cadastro CRM",meta:"Lume Arquitetura",due:"sexta",time:"10:00",done:false},
-  {id:6,title:"Organizar documentos",meta:"Colégio Norte",due:"sexta",time:"15:00",done:true},
-  {id:7,title:"Responder ticket #1042",meta:"Atendimento",due:"hoje",time:"17:00",done:false}
-];
-
-const tickets=[
-  {id:"#1042",title:"Acesso ao painel administrativo",client:"Colégio Norte",priority:"Alta",time:"34 min"},
-  {id:"#1039",title:"Dúvida sobre cobrança mensal",client:"Studio Aurora",priority:"Normal",time:"1h 12m"},
-  {id:"#1035",title:"Atualização cadastral",client:"Bossa Café",priority:"Normal",time:"2h 08m"},
-  {id:"#1031",title:"Integração de novo usuário",client:"Norte Saúde",priority:"Alta",time:"3h 16m"}
-];
-
-let clients=JSON.parse(localStorage.getItem("daegonOpsClients")||"null")||seedClients;
-let tasks=JSON.parse(localStorage.getItem("daegonOpsTasks")||"null")||seedTasks;
-let crmFilter="all";
-let taskFilter="all";
-let currentView="overview";
-
-const titles={overview:"Visão geral",crm:"Clientes & CRM",tasks:"Tarefas",finance:"Financeiro",support:"Suporte"};
-const $=s=>document.querySelector(s);
-const $$=s=>[...document.querySelectorAll(s)];
-
-function switchView(id){
-  currentView=id;
-  $$(".view").forEach(v=>v.classList.toggle("active",v.id===id));
-  $$(".nav-item").forEach(n=>n.classList.toggle("active",n.dataset.view===id));
-  $("#pageTitle").textContent=titles[id];
-  window.scrollTo({top:0,behavior:"smooth"});
-}
-$$("[data-view]").forEach(b=>b.addEventListener("click",()=>switchView(b.dataset.view)));
-$$("[data-jump]").forEach(b=>b.addEventListener("click",()=>switchView(b.dataset.jump)));
-
-function showToast(message){
-  const t=$("#toast");t.textContent=message;t.classList.add("show");
-  clearTimeout(window.__toastTimer);window.__toastTimer=setTimeout(()=>t.classList.remove("show"),2200);
-}
-
-function statusLabel(s){return s==="active"?"Ativo":s==="proposal"?"Proposta":"Lead"}
-function statusPill(s){return '<span class="pill '+s+'">'+statusLabel(s)+'</span>'}
-
-function renderClients(query=""){
-  const q=query.trim().toLowerCase();
-  const rows=clients.filter(c=>(crmFilter==="all"||c.status===crmFilter)&&(!q||c.name.toLowerCase().includes(q)||c.owner.toLowerCase().includes(q)));
-  $("#clientRows").innerHTML=rows.map(c=>`
-    <tr>
-      <td>${c.name}</td>
-      <td>${statusPill(c.status)}</td>
-      <td>${c.owner}</td>
-      <td>${c.last}</td>
-      <td>R$ ${Number(c.value).toLocaleString("pt-BR")}</td>
-      <td><button class="text-btn" data-client="${c.name}">•••</button></td>
-    </tr>`).join("");
-  $("#crmBadge").textContent=clients.length;
-}
-$$("[data-filter]").forEach(b=>b.addEventListener("click",()=>{
-  $$("[data-filter]").forEach(x=>x.classList.remove("active"));b.classList.add("active");crmFilter=b.dataset.filter;renderClients();
-}));
-
-function taskRow(t){
-  return `<label class="task-row ${t.done?"done":""}">
-    <input type="checkbox" data-task-id="${t.id}" ${t.done?"checked":""}>
-    <div><b>${t.title}</b><span>${t.meta||"Sem contexto"}</span></div>
-    <time>${t.due==="hoje"?t.time:t.due}</time>
-  </label>`;
-}
-function filteredTasks(){
-  return tasks.filter(t=>{
-    if(taskFilter==="today") return t.due==="hoje";
-    if(taskFilter==="open") return !t.done;
-    if(taskFilter==="done") return t.done;
-    return true;
-  });
-}
-function renderTasks(){
-  $("#priorityList").innerHTML=tasks.filter(t=>!t.done).slice(0,3).map(taskRow).join("");
-  $("#taskList").innerHTML=filteredTasks().map(taskRow).join("");
-  const open=tasks.filter(t=>!t.done).length;
-  const today=tasks.filter(t=>!t.done&&t.due==="hoje").length;
-  const done=tasks.filter(t=>t.done).length;
-  const score=Math.round((done/tasks.length)*100)||0;
-  $("#openTaskCount").textContent=open;$("#taskBadge").textContent=open;$("#openTasksMetric").textContent=open;$("#dueTodayMetric").textContent=today+" vencem hoje";
-  $("#focusScore").textContent=score+"%";$(".focus-ring").style.setProperty("--progress",score+"%");
-  $$("[data-task-id]").forEach(c=>c.addEventListener("change",()=>{
-    const t=tasks.find(x=>x.id===Number(c.dataset.taskId));if(t){t.done=c.checked;saveTasks();renderTasks();}
-  }));
-}
-function saveTasks(){localStorage.setItem("daegonOpsTasks",JSON.stringify(tasks))}
-$$("[data-task-filter]").forEach(b=>b.addEventListener("click",()=>{
-  $$("[data-task-filter]").forEach(x=>x.classList.remove("active"));b.classList.add("active");taskFilter=b.dataset.taskFilter;renderTasks();
-}));
-
-$("#ticketGrid").innerHTML=tickets.map(t=>`
-  <article class="ticket">
-    <div class="ticket-top"><div><p class="eyebrow">${t.id} · ${t.client}</p><h3>${t.title}</h3></div><span class="pill ${t.priority==="Alta"?"proposal":""}">${t.priority}</span></div>
-    <p>Solicitação em acompanhamento pela equipe de operações.</p>
-    <footer><span>aberto há ${t.time}</span><span>ver ticket →</span></footer>
-  </article>`).join("");
-
-const recordModal=$("#recordModal"),taskModal=$("#taskModal");
-function openModal(m){m.classList.add("open");m.setAttribute("aria-hidden","false")}
-function closeModal(m){m.classList.remove("open");m.setAttribute("aria-hidden","true")}
-["#newRecordBtn","#quickAddBtn","#crmNewBtn"].forEach(sel=>$(sel)?.addEventListener("click",()=>openModal(recordModal)));
-$("#closeRecordModal").addEventListener("click",()=>closeModal(recordModal));
-$("#closeTaskModal").addEventListener("click",()=>closeModal(taskModal));
-$("#addTaskBtn").addEventListener("click",()=>openModal(taskModal));
-[recordModal,taskModal].forEach(m=>m.addEventListener("click",e=>{if(e.target===m)closeModal(m)}));
-
-$("#recordForm").addEventListener("submit",e=>{
-  e.preventDefault();const f=new FormData(e.currentTarget);
-  clients.unshift({name:f.get("name"),value:Number(f.get("value")),status:f.get("status"),owner:"Adilson",last:"agora"});
-  localStorage.setItem("daegonOpsClients",JSON.stringify(clients));renderClients();e.currentTarget.reset();closeModal(recordModal);showToast("Oportunidade adicionada ao CRM.");switchView("crm");
-});
-$("#taskForm").addEventListener("submit",e=>{
-  e.preventDefault();const f=new FormData(e.currentTarget);
-  tasks.unshift({id:Date.now(),title:f.get("title"),meta:f.get("meta")||"Nova tarefa",due:f.get("due"),time:"",done:false});
-  saveTasks();renderTasks();e.currentTarget.reset();closeModal(taskModal);showToast("Tarefa criada.");switchView("tasks");
-});
-
-$("#exportCsvBtn").addEventListener("click",()=>{
-  const lines=[["Cliente","Status","Responsável","Último contato","Valor"],...clients.map(c=>[c.name,statusLabel(c.status),c.owner,c.last,c.value])];
-  const csv=lines.map(row=>row.map(v=>'"'+String(v).replaceAll('"','""')+'"').join(",")).join("\n");
-  const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="daegon-ops-crm.csv";a.click();URL.revokeObjectURL(url);showToast("CSV exportado.");
-});
-
-const overlay=$("#commandOverlay"),cmdInput=$("#commandInput"),cmdResults=$("#commandResults");
-const actions=[
-  {label:"Visão geral",hint:"Navegação",run:()=>switchView("overview")},
-  {label:"Abrir CRM",hint:"Navegação",run:()=>switchView("crm")},
-  {label:"Abrir tarefas",hint:"Navegação",run:()=>switchView("tasks")},
-  {label:"Abrir financeiro",hint:"Navegação",run:()=>switchView("finance")},
-  {label:"Abrir suporte",hint:"Navegação",run:()=>switchView("support")},
-  {label:"Nova oportunidade",hint:"Ação",run:()=>openModal(recordModal)},
-  {label:"Nova tarefa",hint:"Ação",run:()=>openModal(taskModal)},
-  {label:"Exportar CRM em CSV",hint:"Ação",run:()=>$("#exportCsvBtn").click()}
-];
-function openCommand(){overlay.classList.add("open");overlay.setAttribute("aria-hidden","false");cmdInput.value="";renderCommand();setTimeout(()=>cmdInput.focus(),30)}
-function closeCommand(){overlay.classList.remove("open");overlay.setAttribute("aria-hidden","true")}
-function commandItems(){
-  const q=cmdInput.value.toLowerCase().trim();
-  const clientActions=clients.map(c=>({label:c.name,hint:"Cliente · "+statusLabel(c.status),run:()=>{switchView("crm");renderClients(c.name)}}));
-  return [...actions,...clientActions].filter(a=>!q||a.label.toLowerCase().includes(q)||a.hint.toLowerCase().includes(q));
-}
-function renderCommand(){
-  const items=commandItems();cmdResults.innerHTML=items.map((a,i)=>`<button class="command-item ${i===0?"active":""}" data-cmd-index="${i}"><span>${a.label}</span><small>${a.hint}</small></button>`).join("");
-  $$("[data-cmd-index]").forEach(b=>b.addEventListener("click",()=>{const item=commandItems()[Number(b.dataset.cmdIndex)];closeCommand();item?.run()}));
-}
-$("#searchTrigger").addEventListener("click",openCommand);cmdInput.addEventListener("input",renderCommand);
-overlay.addEventListener("click",e=>{if(e.target===overlay)closeCommand()});
-document.addEventListener("keydown",e=>{
-  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="k"){e.preventDefault();openCommand()}
-  if(e.key==="Escape"){closeCommand();closeModal(recordModal);closeModal(taskModal)}
-});
-
-const notifyPanel=$("#notificationsPanel");
-$("#notifyBtn").addEventListener("click",()=>notifyPanel.classList.toggle("open"));
-$("#closeNotifications").addEventListener("click",()=>notifyPanel.classList.remove("open"));
-
-const savedTheme=localStorage.getItem("daegonOpsTheme");
-if(savedTheme==="dark")document.body.classList.add("dark");
-$("#themeToggle").addEventListener("click",()=>{
-  document.body.classList.toggle("dark");localStorage.setItem("daegonOpsTheme",document.body.classList.contains("dark")?"dark":"light");
-});
-
-$("#workspaceBtn").addEventListener("click",()=>showToast("Workspace demo · dados locais"));
-renderClients();renderTasks();
+let contacts=JSON.parse(localStorage.getItem("daegonChatContacts")||"null")||seedContacts;
+let selectedId=contacts[0].id,threadFilter="all",contactFilter="all",botOn=true;
+const messages={
+1:[{type:"bot",text:"Olá, Mariana! 👋 Como posso ajudar?",time:"09:01"},{type:"in",text:"Oi! Queria saber mais sobre matrícula.",time:"09:02"},{type:"out",text:"Claro! Posso te explicar as etapas e depois encaminhar para o setor responsável.",time:"09:03"}],
+2:[{type:"in",text:"Não consigo acessar meu cadastro.",time:"08:51"},{type:"out",text:"Vou verificar com você. Pode me confirmar o e-mail usado no acesso?",time:"08:52"}],
+3:[{type:"bot",text:"Olá! Recebemos seu contato pelo site.",time:"08:35"},{type:"in",text:"Quero falar com o comercial.",time:"08:36"}],
+4:[{type:"in",text:"Pode me enviar a segunda via?",time:"ontem"},{type:"out",text:"Sim, já estou verificando.",time:"ontem"}],
+5:[{type:"bot",text:"Olá! Ficamos à disposição caso queira retomar seu atendimento.",time:"ontem"}]
+};
+function $(s){return document.querySelector(s)} function $$(s){return [...document.querySelectorAll(s)]}
+$$(".nav").forEach(b=>b.onclick=()=>{const id=b.dataset.view;$$(".view").forEach(v=>v.classList.toggle("active",v.id===id));$$(".nav").forEach(n=>n.classList.toggle("active",n===b));$("#pageTitle").textContent=views[id]});
+function initials(n){return n.split(" ").slice(0,2).map(x=>x[0]).join("")}
+function statusLabel(s){return s==="customer"?"Cliente":s==="inactive"?"Inativo":"Lead"}
+function renderThreads(){const list=contacts.filter(c=>threadFilter==="all"||(threadFilter==="unread"&&c.unread)||(threadFilter==="bot"&&c.bot));$("#threadList").innerHTML=list.map(c=>`<div class="thread ${c.id===selectedId?"active":""}" data-id="${c.id}"><div class="ava">${initials(c.name)}</div><div><b>${c.name}</b><p>${(messages[c.id]||[]).at(-1)?.text||"Novo contato"}</p></div><div><time>${c.last}</time>${c.unread?'<span class="unread">•</span>':""}</div></div>`).join("");$$(".thread").forEach(t=>t.onclick=()=>{selectedId=+t.dataset.id;const c=contacts.find(x=>x.id===selectedId);if(c)c.unread=false;renderAll()})}
+function renderChat(){const c=contacts.find(x=>x.id===selectedId)||contacts[0];$("#chatHead").innerHTML=`<div><b>${c.name}</b><small>${c.phone} · ${c.source}</small></div><span class="status">${statusLabel(c.status)}</span>`;$("#chatBody").innerHTML=(messages[c.id]||[]).map(m=>`<div class="msg ${m.type}">${m.text}<small>${m.time}</small></div>`).join("");$("#contactInfo").innerHTML=`<div class="ava">${initials(c.name)}</div><h3>${c.name}</h3><p>${c.phone}</p><p>Status: <b>${statusLabel(c.status)}</b></p><p>Responsável: <b>${c.owner}</b></p><p>Origem: <b>${c.source}</b></p><div>${c.tags.map(t=>'<span class="tag">'+t+'</span>').join("")}</div>`;$("#chatBody").scrollTop=$("#chatBody").scrollHeight}
+function renderContacts(){const rows=contacts.filter(c=>contactFilter==="all"||c.status===contactFilter);$("#contactRows").innerHTML=rows.map(c=>`<tr><td>${c.name}<br><small>${c.phone}</small></td><td><span class="status">${statusLabel(c.status)}</span></td><td>${c.source}</td><td>${c.owner}</td><td>${c.last}</td><td>${c.tags.join(", ")}</td></tr>`).join("")}
+function renderPipeline(){const lanes=[["lead","Novos"],["contact","Contato"],["proposal","Proposta"],["customer","Fechado"]];$("#kanban").innerHTML=lanes.map(([key,title],i)=>`<div class="lane"><h3>${title}</h3>${contacts.filter(c=>i===0?c.status==="lead":i===3?c.status==="customer":false).map(c=>'<div class="deal"><b>'+c.name+'</b><span>'+c.tags.join(" · ")+'</span></div>').join("")||'<div class="deal"><b>Oportunidade demo</b><span>R$ '+(1200+i*650).toLocaleString("pt-BR")+'</span></div>'}</div>`).join("")}
+const autos=[["Boas-vindas WhatsApp","Mensagem nova → saudação → menu","Ativa"],["Lead sem resposta","24h sem retorno → criar follow-up","Ativa"],["Transferência humana","Palavra-chave → fila responsável","Ativa"],["Pós-atendimento","Conversa encerrada → pesquisa CSAT","Pausada"]];
+function renderAutomations(){ $("#automationGrid").innerHTML=autos.map(a=>`<article class="auto-card"><span class="status">${a[2]}</span><h3>${a[0]}</h3><p>${a[1]}</p><footer><span>última execução: hoje</span><b>•••</b></footer></article>`).join("")}
+function renderAll(){renderThreads();renderChat();renderContacts();renderPipeline();renderAutomations();localStorage.setItem("daegonChatContacts",JSON.stringify(contacts))}
+$$("[data-thread-filter]").forEach(b=>b.onclick=()=>{$$("[data-thread-filter]").forEach(x=>x.classList.remove("active"));b.classList.add("active");threadFilter=b.dataset.threadFilter;renderThreads()});
+$$("[data-contact-filter]").forEach(b=>b.onclick=()=>{$$("[data-contact-filter]").forEach(x=>x.classList.remove("active"));b.classList.add("active");contactFilter=b.dataset.contactFilter;renderContacts()});
+$("#sendBtn").onclick=()=>{const text=$("#msgInput").value.trim();if(!text)return;(messages[selectedId]??=[]).push({type:"out",text,time:"agora"});$("#msgInput").value="";renderChat()};
+$("#msgInput").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();$("#sendBtn").click()}});
+$("#botToggle").onclick=()=>{botOn=!botOn;$("#botToggle").textContent=botOn?"Bot ON":"Bot OFF";toast(botOn?"Bot ativado":"Bot pausado")};
+const modal=$("#contactModal");["#newContactBtn","#newContactBtn2"].forEach(s=>$(s).onclick=()=>modal.classList.add("open"));$("#closeModal").onclick=()=>modal.classList.remove("open");modal.onclick=e=>{if(e.target===modal)modal.classList.remove("open")};
+$("#contactForm").onsubmit=e=>{e.preventDefault();const f=new FormData(e.currentTarget);const id=Date.now();contacts.unshift({id,name:f.get("name"),phone:f.get("phone"),status:f.get("status"),source:"WhatsApp",owner:"Adilson",last:"agora",tags:[f.get("tag")||"Novo"],unread:false,bot:true});messages[id]=[{type:"bot",text:"Olá! 👋 Como posso ajudar?",time:"agora"}];selectedId=id;e.currentTarget.reset();modal.classList.remove("open");renderAll();toast("Contato criado")};
+$("#themeBtn").onclick=()=>{document.body.classList.toggle("dark");localStorage.setItem("daegonChatTheme",document.body.classList.contains("dark")?"dark":"light")};if(localStorage.getItem("daegonChatTheme")==="dark")document.body.classList.add("dark");
+$("#saveBotBtn").onclick=()=>toast("Configurações do bot salvas");$("#newAutomationBtn").onclick=()=>toast("Construtor de automação em evolução");
+function toast(t){const el=$("#toast");el.textContent=t;el.classList.add("show");setTimeout(()=>el.classList.remove("show"),1800)}
+const command=$("#command"),cmdInput=$("#commandInput");$("#searchBtn").onclick=()=>{command.classList.add("open");cmdInput.focus()};function renderCommand(){const q=cmdInput.value.toLowerCase();const items=[...Object.entries(views).map(([id,label])=>({label,run:()=>{$('[data-view="'+id+'"]').click()}})),...contacts.map(c=>({label:c.name,run:()=>{selectedId=c.id;$('[data-view="inbox"]').click();renderAll()}}))].filter(x=>x.label.toLowerCase().includes(q));$("#commandResults").innerHTML=items.map((x,i)=>'<button class="command-item" data-ci="'+i+'">'+x.label+'</button>').join("");$$("[data-ci]").forEach(b=>b.onclick=()=>{items[+b.dataset.ci].run();command.classList.remove("open")})}cmdInput.oninput=renderCommand;document.addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="k"){e.preventDefault();command.classList.add("open");renderCommand();cmdInput.focus()}if(e.key==="Escape"){command.classList.remove("open");modal.classList.remove("open")}});renderCommand();renderAll();
