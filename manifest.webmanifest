@@ -1,6 +1,6 @@
 {
-  "name": "Daegon Ops",
-  "short_name": "Daegon Ops",
+  "name": "Daegon Chat",
+  "short_name": "Daegon Chat",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#f4f6f3",
