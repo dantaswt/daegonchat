@@ -1,0 +1,26 @@
+{
+  "name": "daegonchat",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24.15.0"
+  },
+  "scripts": {
+    "start": "node --env-file-if-exists=.env server/index.js",
+    "dev": "node --env-file-if-exists=.env --watch server/index.js",
+    "setup": "node --env-file-if-exists=.env server/setup.js",
+    "test": "node --test tests/*.test.js",
+    "test:browser": "node tests/browser.mjs",
+    "format": "prettier --write app.js styles.css index.html server tests README.md package.json",
+    "format:check": "prettier --check app.js styles.css index.html server tests README.md package.json"
+  },
+  "dependencies": {
+    "better-auth": "^1.7.7",
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "playwright": "^1.63.0",
+    "prettier": "^3.9.9"
+  }
+}
