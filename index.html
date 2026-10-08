@@ -1,12 +1,146 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0d1117"><meta name="description" content="Daegon Chat — CRM, WhatsApp, bot e atendimento em uma única operação."><title>Daegon Chat — CRM & WhatsApp Workspace</title><link rel="icon" type="image/svg+xml" href="favicon.svg"><link rel="manifest" href="manifest.webmanifest"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="styles.css"></head><body>
-<aside class="sidebar"><a class="brand" href="#inbox"><span class="mark">D</span><span><b>Daegon</b><small>Chat</small></span></a><nav><button class="nav active" data-view="inbox">◉ <span>Inbox</span><em>8</em></button><button class="nav" data-view="contacts">◎ <span>Contatos</span></button><button class="nav" data-view="pipeline">▤ <span>Pipeline</span></button><button class="nav" data-view="automations">⚡ <span>Automações</span></button><button class="nav" data-view="bots">◇ <span>Bots</span></button><button class="nav" data-view="analytics">↗ <span>Analytics</span></button></nav><div class="sidefoot"><div class="user"><b>AD</b><span>Adilson<small>Administrador</small></span></div><small>DEMO WORKSPACE</small></div></aside>
-<div class="app"><header class="top"><div><p>CRM + WHATSAPP + AUTOMATION</p><h1 id="pageTitle">Inbox</h1></div><div class="actions"><button id="searchBtn" class="ghost">⌕ Buscar <kbd>Ctrl K</kbd></button><button id="themeBtn" class="ghost">◐</button><button id="newContactBtn" class="primary">+ Novo contato</button></div></header><main>
-<section id="inbox" class="view active"><div class="inbox"><aside class="threads"><div class="section-title"><div><p>CONVERSAS</p><h2>Atendimento</h2></div></div><div class="filters"><button class="active" data-thread-filter="all">Todas</button><button data-thread-filter="unread">Não lidas</button><button data-thread-filter="bot">Com bot</button></div><div id="threadList"></div></aside><section class="chat"><header id="chatHead"></header><div id="chatBody"></div><footer><textarea id="msgInput" rows="1" placeholder="Digite uma mensagem..."></textarea><button id="botToggle" class="ghost">Bot ON</button><button id="sendBtn" class="primary">Enviar</button></footer></section><aside id="contactInfo" class="contact-info"></aside></div></section>
-<section id="contacts" class="view"><div class="toolbar"><div class="segmented"><button class="active" data-contact-filter="all">Todos</button><button data-contact-filter="lead">Leads</button><button data-contact-filter="customer">Clientes</button><button data-contact-filter="inactive">Inativos</button></div><button class="primary" id="newContactBtn2">+ Contato</button></div><div class="table-card"><table><thead><tr><th>Contato</th><th>Status</th><th>Origem</th><th>Responsável</th><th>Último contato</th><th>Tags</th></tr></thead><tbody id="contactRows"></tbody></table></div></section>
-<section id="pipeline" class="view"><div class="pipeline-head"><div><p>PIPELINE COMERCIAL</p><h2>Funil de atendimento</h2></div><div class="mini-metrics"><span><b>R$ 14,7k</b><small>pipeline</small></span><span><b>37,5%</b><small>conversão</small></span><span><b>11</b><small>oportunidades</small></span></div></div><div id="kanban" class="kanban"></div></section>
-<section id="automations" class="view"><div class="toolbar"><div><p>AUTOMAÇÕES</p><h2>Fluxos ativos</h2></div><button class="primary" id="newAutomationBtn">+ Automação</button></div><div id="automationGrid" class="cards"></div></section>
-<section id="bots" class="view"><div class="bot-grid"><article class="panel"><p>BOT BUILDER</p><h2>Fluxo de boas-vindas</h2><div class="flow"><div><b>1</b><span>Mensagem recebida<small>WhatsApp</small></span></div><i></i><div><b>2</b><span>Enviar saudação<small>“Olá! Como posso ajudar?”</small></span></div><i></i><div><b>3</b><span>Identificar intenção<small>Comercial · Suporte · Financeiro</small></span></div><i></i><div><b>4</b><span>Encaminhar setor<small>Fila + responsável</small></span></div></div></article><aside class="panel settings"><p>BOT SETTINGS</p><h3>Daegon Assistant</h3><label>Saudação<textarea id="botGreeting">Olá! 👋 Sou o assistente virtual. Como posso ajudar?</textarea></label><label>Transferência<select><option>Imediatamente</option><option>Após 2 mensagens</option><option>Após falha do bot</option></select></label><label><span>Responder fora do horário</span><input type="checkbox" checked></label><label><span>Coletar nome</span><input type="checkbox" checked></label><button class="primary" id="saveBotBtn">Salvar configurações</button></aside></div></section>
-<section id="analytics" class="view"><div class="metrics"><article><span>Conversas hoje</span><strong>48</strong><small>↑ 18%</small></article><article><span>Tempo de resposta</span><strong>2m 14s</strong><small>↓ 36s</small></article><article><span>Resolvidas pelo bot</span><strong>41%</strong><small>20 conversas</small></article><article><span>CSAT</span><strong>4,8/5</strong><small>32 avaliações</small></article></div><div class="analytics-grid"><article class="panel"><p>VOLUME</p><h3>Conversas por dia</h3><div class="bars"><i style="height:42%"></i><i style="height:58%"></i><i style="height:51%"></i><i style="height:75%"></i><i style="height:68%"></i><i style="height:93%"></i><i class="hot" style="height:84%"></i></div></article><article class="panel channels"><p>ORIGEM</p><h3>Canais</h3><div><b>WhatsApp</b><span>78%</span><i><em style="width:78%"></em></i></div><div><b>Site</b><span>14%</span><i><em style="width:14%"></em></i></div><div><b>Instagram</b><span>8%</span><i><em style="width:8%"></em></i></div></article></div></section>
-</main></div>
-<div class="modal" id="contactModal"><form id="contactForm"><button type="button" id="closeModal">×</button><p>NOVO CONTATO</p><h2>Adicionar ao CRM</h2><label>Nome<input name="name" required></label><label>WhatsApp<input name="phone" required placeholder="+55 79 99999-9999"></label><label>Status<select name="status"><option value="lead">Lead</option><option value="customer">Cliente</option><option value="inactive">Inativo</option></select></label><label>Tag<input name="tag" placeholder="Ex.: Matrícula"></label><button class="primary">Salvar contato</button></form></div>
-<div class="command" id="command"><div><input id="commandInput" placeholder="Buscar contato, página ou ação..."><div id="commandResults"></div></div></div><div class="toast" id="toast"></div><script src="app.js"></script></body></html>
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#102e29" />
+    <meta
+      name="description"
+      content="Daegon Chat — CRM e atendimento por departamento."
+    />
+    <title>Daegon Chat · CRM</title>
+    <link rel="icon" href="/favicon.svg" />
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    <div id="login" class="login-layout">
+      <section class="login-story">
+        <a class="brand" href="/"
+          >d<span
+            >daegon<span class="brand-light">chat</span
+            ><small>RELACIONAMENTOS QUE AVANÇAM</small></span
+          ></a
+        >
+        <div>
+          <span class="eyebrow">SEU TIME. UMA CONVERSA.</span>
+          <h1>
+            Mais próximo.<br />Mais organizado.<br /><em>Mais humano.</em>
+          </h1>
+          <p>
+            Conecte clientes às pessoas certas.<br />Um espaço para cada equipe,
+            uma visão para todo o negócio.
+          </p>
+          <div class="story-line">
+            <span>01 / Conectar</span><span>02 / Direcionar</span
+            ><span>03 / Resolver</span>
+          </div>
+        </div>
+        <small>Daegon Chat · Central de relacionamento</small>
+      </section>
+      <section class="login-panel">
+        <form id="loginForm" class="login-card">
+          <span class="eyebrow">BEM-VINDO DE VOLTA</span>
+          <h2>Seu atendimento<br />começa aqui.</h2>
+          <p>Entre com a conta fornecida pelo administrador.</p>
+          <label
+            >E-mail<input
+              name="email"
+              type="email"
+              autocomplete="username"
+              required
+              placeholder="voce@empresa.com" /></label
+          ><label
+            >Senha<input
+              name="password"
+              type="password"
+              autocomplete="current-password"
+              required
+              placeholder="Sua senha"
+          /></label>
+          <p id="loginError" role="alert" class="error"></p>
+          <button class="primary" type="submit">
+            Entrar no workspace <span>→</span></button
+          ><small
+            >Precisa de acesso? Fale com o administrador da sua equipe.</small
+          >
+        </form>
+      </section>
+    </div>
+    <div id="workspace" class="workspace" hidden>
+      <aside id="sidebar" class="sidebar">
+        <a class="brand" href="/"
+          >d<span
+            >daegon<span class="brand-light">chat</span
+            ><small>WORKSPACE</small></span
+          ></a
+        >
+        <div class="workspace-label">
+          <span class="workspace-icon">D</span>
+          <div>Minha operação<small>Central de atendimento</small></div>
+          <span>⌄</span>
+        </div>
+        <span class="nav-label">PRINCIPAL</span>
+        <nav id="nav"></nav>
+        <div class="sidebar-bottom">
+          <div class="sidebar-tip">
+            <span>Feito para conectar.</span>
+            <p>Cada conversa é uma<br />nova oportunidade.</p>
+            <span class="tip-art">↗</span>
+          </div>
+          <button id="accountBtn" class="account">
+            <span id="userAvatar" class="avatar"></span
+            ><span><b id="userName"></b><small id="userRole"></small></span
+            ><span>⚙</span></button
+          ><button id="logoutBtn" class="logout">Sair da conta ↗</button>
+        </div>
+      </aside>
+      <div class="main-shell">
+        <header class="topbar">
+          <button
+            id="menuBtn"
+            class="icon-button"
+            aria-label="Abrir navegação"
+            aria-expanded="false"
+          >
+            ☰
+          </button>
+          <div class="breadcrumb">
+            Workspace <span>/</span> <b id="pageLabel">Visão geral</b>
+          </div>
+          <div class="topbar-right">
+            <span class="live-dot"></span><span>Seu time conectado</span
+            ><span id="today"></span>
+          </div>
+        </header>
+        <main id="main" tabindex="-1"></main>
+        <footer class="main-footer">
+          <span>DAEGON CHAT</span><span>Um lugar para boas conversas.</span>
+        </footer>
+      </div>
+    </div>
+    <dialog id="modal">
+      <form id="modalForm">
+        <div class="modal-head">
+          <h2 id="modalTitle"></h2>
+          <button
+            type="button"
+            id="closeModal"
+            class="icon-button"
+            aria-label="Fechar"
+          >
+            ×
+          </button>
+        </div>
+        <div id="modalFields"></div>
+        <p id="modalError" class="error" role="alert"></p>
+        <div class="modal-actions">
+          <button type="button" id="cancelModal" class="secondary">
+            Cancelar</button
+          ><button type="submit" class="primary">Salvar</button>
+        </div>
+      </form>
+    </dialog>
+    <div id="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>
